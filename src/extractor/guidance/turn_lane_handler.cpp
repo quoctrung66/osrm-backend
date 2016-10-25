@@ -5,12 +5,15 @@
 #include "extractor/guidance/turn_lane_matcher.hpp"
 #include "util/simple_logger.hpp"
 #include "util/typedefs.hpp"
+#include "util/angle_calculations.hpp"
 
 #include <cstddef>
 #include <cstdint>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+
+using osrm::util::guidance::angularDeviation;
 
 namespace osrm
 {

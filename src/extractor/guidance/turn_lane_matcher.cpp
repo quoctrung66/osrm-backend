@@ -1,11 +1,14 @@
 #include "extractor/guidance/turn_lane_matcher.hpp"
 #include "extractor/guidance/toolkit.hpp"
 #include "util/guidance/toolkit.hpp"
+#include "util/angle_calculations.hpp"
 
 #include <boost/assert.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <functional>
+
+using osrm::util::guidance::angularDeviation;
 
 namespace osrm
 {

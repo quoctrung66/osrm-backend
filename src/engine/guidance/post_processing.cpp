@@ -9,6 +9,7 @@
 
 #include "util/bearing.hpp"
 #include "util/guidance/toolkit.hpp"
+#include "util/angle_calculations.hpp"
 #include "util/guidance/turn_lanes.hpp"
 
 #include <boost/assert.hpp>

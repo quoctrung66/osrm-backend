@@ -6,7 +6,6 @@
 #include "extractor/guidance/constants.hpp"
 #include "extractor/guidance/turn_instruction.hpp"
 #include "extractor/suffix_table.hpp"
-#include "engine/guidance/route_step.hpp"
 #include "engine/phantom_node.hpp"
 #include "util/attributes.hpp"
 #include "util/guidance/bearing_class.hpp"
@@ -28,12 +27,6 @@ namespace util
 {
 namespace guidance
 {
-
-inline double angularDeviation(const double angle, const double from)
-{
-    const double deviation = std::abs(angle - from);
-    return std::min(360 - deviation, deviation);
-}
 
 inline bool hasRampType(const extractor::guidance::TurnInstruction instruction)
 {

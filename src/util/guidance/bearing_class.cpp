@@ -1,5 +1,6 @@
 #include "util/guidance/bearing_class.hpp"
 #include "util/guidance/toolkit.hpp"
+#include "util/angle_calculations.hpp"
 
 #include <algorithm>
 #include <boost/assert.hpp>

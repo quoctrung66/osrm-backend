@@ -1,14 +1,22 @@
 #ifndef OSRM_EXTRACTOR_GUIDANCE_INTERSECTION_HPP_
 #define OSRM_EXTRACTOR_GUIDANCE_INTERSECTION_HPP_
 
+#include <cstdint>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
-#include "extractor/guidance/turn_instruction.hpp"
+#include "util/angle_calculations.hpp"
 #include "util/bearing.hpp"
 #include "util/guidance/toolkit.hpp"
 #include "util/node_based_graph.hpp"
 #include "util/typedefs.hpp" // EdgeID
+
+#include "extractor/guidance/turn_instruction.hpp"
+
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/algorithm/find_if.hpp>
 
 namespace osrm
 {
@@ -128,11 +136,78 @@ struct Intersection final : std::vector<ConnectedRoad>
      * allows checking intersections for validity
      */
     bool valid() const;
-
-    // given all possible turns, which is the highest connected number of lanes per turn. This value
-    // is used, for example, during generation of intersections.
-    std::uint8_t getHighestConnectedLaneCount(const util::NodeBasedDynamicGraph &) const;
 };
+
+namespace intersection_helpers
+{
+
+// find the edge associated with a given eid
+template <class IntersectionType>
+typename IntersectionType::const_iterator findRoadForEid(const IntersectionType &intersection,
+                                                         const EdgeID eid)
+{
+    return std::find_if(intersection.begin(), intersection.end(), [eid](const auto &road) {
+        return road.eid == eid;
+    });
+}
+
+template <class IntersectionType>
+typename IntersectionType::const_iterator findClosestBearing(const IntersectionType &intersection,
+                                                             const double bearing)
+{
+    return std::min_element(
+        intersection.begin(), intersection.end(), [bearing](const auto &lhs, const auto &rhs) {
+            return util::guidance::angularDeviation(lhs.bearing, bearing) <
+                   util::guidance::angularDeviation(rhs.bearing, bearing);
+        });
+}
+
+// the FilterType needs to be a function, returning false for elements to keep and true for elements
+// to remove from the considerations.
+template <class IntersectionType, class UnaryPredicate>
+typename IntersectionType::const_iterator findClosestTurn(const IntersectionType &intersection,
+                                                          const double angle,
+                                                          const UnaryPredicate filter)
+{
+    const auto candidate = std::min_element(
+        intersection.begin(),
+        intersection.end(),
+        [angle, &filter](const auto &lhs, const auto &rhs) {
+            const auto filtered_lhs = filter(lhs), filtered_rhs = filter(rhs);
+            const auto deviation_lhs = util::guidance::angularDeviation(lhs.angle, angle),
+                       deviation_rhs = util::guidance::angularDeviation(rhs.angle, angle);
+            return std::tie(filtered_lhs, deviation_lhs) < std::tie(filtered_rhs, deviation_rhs);
+        });
+
+    // make sure only to return valid elements
+    return filter(*candidate) ? intersection.cend() : candidate;
+}
+
+// given all possible turns, which is the highest connected number of lanes per turn. This value
+// is used, for example, during generation of intersections.
+template <class IntersectionType>
+std::uint8_t getHighestConnectedLaneCount(const IntersectionType &intersection,
+                                          const util::NodeBasedDynamicGraph &node_based_graph)
+{
+    BOOST_ASSERT(!intersection.empty());
+    using RoadDataType = typename IntersectionType::value_type;
+
+    const std::function<std::uint8_t(const RoadDataType &)> to_lane_count =
+        [&](const RoadDataType &road) {
+            return node_based_graph.GetEdgeData(road.eid).road_classification.GetNumberOfLanes();
+        };
+
+    std::uint8_t max_lanes = 0;
+    const auto extract_maximal_value = [&max_lanes](std::uint8_t value) {
+        max_lanes = std::max(max_lanes, value);
+        return false;
+    };
+
+    const auto view = intersection | boost::adaptors::transformed(to_lane_count);
+    boost::range::find_if(view, extract_maximal_value);
+    return max_lanes;
+}
+} // namespace intersection_helpers
 
 Intersection::const_iterator findClosestTurn(const Intersection &intersection, const double angle);
 Intersection::iterator findClosestTurn(Intersection &intersection, const double angle);

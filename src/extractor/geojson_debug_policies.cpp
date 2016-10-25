@@ -9,33 +9,35 @@ namespace osrm
 namespace extractor
 {
 
-IntersectionPrinter::IntersectionPrinter(
+IntersectionShapePrinter::IntersectionShapePrinter(
     const util::NodeBasedDynamicGraph &node_based_graph,
     const std::vector<extractor::QueryNode> &node_coordinates,
     const extractor::guidance::CoordinateExtractor &coordinate_extractor)
     : node_based_graph(node_based_graph), node_coordinates(node_coordinates),
       coordinate_extractor(coordinate_extractor){};
 
-util::json::Array IntersectionPrinter::
+util::json::Array IntersectionShapePrinter::
 operator()(const NodeID intersection_node,
-           const extractor::guidance::Intersection &intersection,
+           const extractor::guidance::IntersectionShape &intersection,
            const boost::optional<util::json::Object> &node_style,
            const boost::optional<util::json::Object> &way_style) const
 {
     // request the number of lanes. This process needs to be in sync with what happens over at
     // intersection_generator
-    const auto intersection_lanes = intersection.getHighestConnectedLaneCount(node_based_graph);
+    const auto intersection_lanes = guidance::intersection_helpers::getHighestConnectedLaneCount(
+        intersection, node_based_graph);
 
     std::vector<util::Coordinate> coordinates;
     coordinates.reserve(intersection.size());
     coordinates.push_back(node_coordinates[intersection_node]);
 
-    const auto road_to_coordinate = [&](const extractor::guidance::ConnectedRoad &connected_road) {
-        const constexpr auto FORWARD = false;
-        const auto to_node = node_based_graph.GetTarget(connected_road.eid);
-        return coordinate_extractor.GetCoordinateAlongRoad(
-            intersection_node, connected_road.eid, FORWARD, to_node, intersection_lanes);
-    };
+    const auto road_to_coordinate =
+        [&](const extractor::guidance::IntersectionShapeData &connected_road) {
+            const constexpr auto FORWARD = false;
+            const auto to_node = node_based_graph.GetTarget(connected_road.eid);
+            return coordinate_extractor.GetCoordinateAlongRoad(
+                intersection_node, connected_road.eid, FORWARD, to_node, intersection_lanes);
+        };
 
     std::transform(intersection.begin(),
                    intersection.end(),
@@ -61,6 +63,27 @@ operator()(const NodeID intersection_node,
                        coordinate_to_line);
     }
     return features;
+}
+
+IntersectionPrinter::IntersectionPrinter(
+    const util::NodeBasedDynamicGraph &node_based_graph,
+    const std::vector<extractor::QueryNode> &node_coordinates,
+    const extractor::guidance::CoordinateExtractor &coordinate_extractor)
+    : IntersectionShapePrinter(node_based_graph, node_coordinates, coordinate_extractor){};
+
+util::json::Array IntersectionPrinter::
+operator()(const NodeID intersection_node,
+           const extractor::guidance::Intersection &intersection,
+           const boost::optional<util::json::Object> &node_style,
+           const boost::optional<util::json::Object> &way_style) const
+{
+    guidance::IntersectionShape intersection_shape;
+    intersection_shape.resize(intersection.size());
+    std::transform(intersection.begin(),
+                   intersection.end(),
+                   intersection_shape.begin(),
+                   [](const auto &road) { return guidance::IntersectionShapeData(road); });
+    return Base::operator()(intersection_node, intersection_shape, node_style, way_style);
 }
 
 } /* namespace extractor */
