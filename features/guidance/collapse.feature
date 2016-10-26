@@ -701,10 +701,10 @@ Feature: Collapse
         Given the node map
             """
                       g
-
+                      .
                       c
-            a     b
-                        d
+            a . . b .'
+                      ` d.
                         f e
             """
 
@@ -725,10 +725,10 @@ Feature: Collapse
 
         When I route I should get
             | waypoints | route                 | turns                                      |
-            | a,g       | road,cross,cross      | depart,turn left,arrive                    |
-            | a,e       | road,road,road        | depart,continue straight,arrive            |
+            | a,g       | road,cross,cross      | depart,fork left,arrive                    |
+            | a,e       | road,road,road        | depart,fork slight right,arrive            |
             # We should discuss whether the next item should be collapsed to depart,turn right,arrive.
-            | a,f       | road,road,cross,cross | depart,continue straight,turn right,arrive |
+            | a,f       | road,road,cross,cross | depart,fork slight right,turn right,arrive |
 
     Scenario: On-Off on Highway
         Given the node map

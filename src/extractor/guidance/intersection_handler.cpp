@@ -7,7 +7,6 @@
 #include "util/simple_logger.hpp"
 
 #include <algorithm>
-#include <cstddef>
 
 using EdgeData = osrm::util::NodeBasedDynamicGraph::EdgeData;
 using osrm::util::guidance::getTurnDirection;
@@ -34,15 +33,9 @@ IntersectionHandler::IntersectionHandler(const util::NodeBasedDynamicGraph &node
                                          const IntersectionGenerator &intersection_generator)
     : node_based_graph(node_based_graph), node_info_list(node_info_list), name_table(name_table),
       street_name_suffix_table(street_name_suffix_table),
-      intersection_generator(intersection_generator)
+      intersection_generator(intersection_generator),
+      graph_walker(node_based_graph, intersection_generator)
 {
-}
-
-std::size_t IntersectionHandler::countValid(const Intersection &intersection) const
-{
-    return std::count_if(intersection.begin(), intersection.end(), [](const ConnectedRoad &road) {
-        return road.entry_allowed;
-    });
 }
 
 TurnType::Enum IntersectionHandler::findBasicTurnType(const EdgeID via_edge,
@@ -785,6 +778,47 @@ std::size_t IntersectionHandler::findObviousTurn(const EdgeID via_edge,
     }
 
     return 0;
+}
+
+boost::optional<IntersectionHandler::IntersectionViewAndNode>
+IntersectionHandler::getNextIntersection(const NodeID at, const EdgeID via) const
+{
+    // We use the intersection generator to jump over traffic signals, barriers. The intersection
+    // generater takes a starting node and a corresponding edge starting at this node. It returns
+    // the next non-artificial intersection writing as out param. the source node and the edge
+    // for which the target is the next intersection.
+    //
+    // .            .
+    // a . . tl . . c .
+    // .            .
+    //
+    // e0 ^      ^ e1
+    //
+    // Starting at node `a` via edge `e0` the intersection generator returns the intersection at `c`
+    // writing `tl` (traffic signal) node and the edge `e1` which has the intersection as target.
+
+    NodeID node = SPECIAL_NODEID;
+    EdgeID edge = SPECIAL_EDGEID;
+
+    auto intersection = intersection_generator.GetActualNextIntersection(at,     // start node
+                                                                         via,    // via edge
+                                                                         &node,  // before isec
+                                                                         &edge); // to isec
+
+    // This should never happen, guard against nevertheless
+    if (node == SPECIAL_NODEID || edge == SPECIAL_EDGEID)
+    {
+        return boost::none;
+    }
+
+    auto intersection_node = node_based_graph.GetTarget(edge);
+
+    if (intersection.size() <= 2 || intersection.isTrafficSignalOrBarrier())
+    {
+        return boost::none;
+    }
+
+    return boost::make_optional(IntersectionViewAndNode{intersection, intersection_node});
 }
 
 } // namespace guidance

@@ -9,9 +9,14 @@
 #include "util/name_table.hpp"
 #include "util/node_based_graph.hpp"
 
+#include "util/geojson_debug_logger.hpp"
+#include "util/geojson_debug_policies.hpp"
+
 #include <cstddef>
 #include <utility>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 namespace osrm
 {
@@ -22,7 +27,7 @@ namespace guidance
 
 // Intersection handlers deal with all issues related to intersections.
 // They assign appropriate turn operations to the TurnOperations.
-class SliproadHandler : public IntersectionHandler
+class SliproadHandler final : public IntersectionHandler
 {
   public:
     SliproadHandler(const IntersectionGenerator &intersection_generator,
@@ -42,6 +47,40 @@ class SliproadHandler : public IntersectionHandler
     Intersection operator()(const NodeID nid,
                             const EdgeID via_eid,
                             Intersection intersection) const override final;
+
+  private:
+    util::ScopedGeojsonLoggerGuard<util::NodeIdVectorToLineString> geojson_lines;
+    util::ScopedGeojsonLoggerGuard<util::NodeIdVectorToMultiPoint> geojson_points;
+
+    boost::optional<std::size_t> getObviousIndexWithSliproads(const EdgeID from,
+                                                              const Intersection &intersection,
+                                                              const NodeID at) const;
+
+    // Next intersection from `start` onto `onto` is too far away for a Siproad scenario
+    bool nextIntersectionIsTooFarAway(const NodeID start, const EdgeID onto) const;
+
+    // Through street: does a road continue with from's name at the intersection
+    bool isThroughStreet(const EdgeID from, const Intersection &intersection) const;
+
+    // Does the road from `current` to `next` continue
+    bool roadContinues(const EdgeID current, const EdgeID next) const;
+
+    // Is the area under the triangle a valid Sliproad triangle
+    bool isValidSliproadArea(const double max_area, const NodeID, const NodeID, const NodeID) const;
+
+    // Is the Sliproad a link the both roads it shortcuts must not be links
+    bool isValidSliproadLink(const ConnectedRoad &sliproad,
+                             const ConnectedRoad &first,
+                             const ConnectedRoad &second) const;
+
+    // Could a Sliproad reach this intersection?
+    static bool canBeTargetOfSliproad(const Intersection &intersection);
+
+    // Scales a threshold based on the underlying road classification.
+    // Example: a 100 m threshold for a highway if different on living streets.
+    // The return value is guaranteed to not be larger than `threshold`.
+    static double scaledThresholdByRoadClass(const double max_threshold,
+                                             const RoadClassification &classification);
 };
 
 } // namespace guidance

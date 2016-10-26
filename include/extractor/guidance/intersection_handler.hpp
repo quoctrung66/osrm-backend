@@ -3,6 +3,7 @@
 
 #include "extractor/guidance/intersection.hpp"
 #include "extractor/guidance/intersection_generator.hpp"
+#include "extractor/guidance/node_based_graph_walker.hpp"
 #include "extractor/query_node.hpp"
 #include "extractor/suffix_table.hpp"
 
@@ -11,6 +12,8 @@
 
 #include <cstddef>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 namespace osrm
 {
@@ -48,9 +51,7 @@ class IntersectionHandler
     const util::NameTable &name_table;
     const SuffixTable &street_name_suffix_table;
     const IntersectionGenerator &intersection_generator;
-
-    // counts the number on allowed entry roads
-    std::size_t countValid(const Intersection &intersection) const;
+    const NodeBasedGraphWalker graph_walker; // for skipping traffic signal, distances etc.
 
     // Decide on a basic turn types
     TurnType::Enum findBasicTurnType(const EdgeID via_edge, const ConnectedRoad &candidate) const;
@@ -83,7 +84,31 @@ class IntersectionHandler
                             const std::size_t begin,
                             const std::size_t end) const;
 
+    // Checks the intersection for a through street connected to `intersection[index]`
     bool isThroughStreet(const std::size_t index, const Intersection &intersection) const;
+
+    // See `getNextIntersection`
+    struct IntersectionViewAndNode final
+    {
+        IntersectionView intersection; // < actual intersection
+        NodeID node;                   // < node at this intersection
+    };
+
+    // Skips over artificial intersections i.e. traffic lights, barriers etc.
+    // Returns the next non-artificial intersection and its node in the node based
+    // graph if an intersection could be found or none otherwise.
+    //
+    //  a ... tl ... b .. c
+    //               .
+    //               .
+    //               d
+    //
+    //  ^ at
+    //     ^ via
+    //
+    // For this scenario returns intersection at `b` and `b`.
+    boost::optional<IntersectionHandler::IntersectionViewAndNode>
+    getNextIntersection(const NodeID at, const EdgeID via) const;
 };
 
 } // namespace guidance

@@ -194,12 +194,12 @@ Intersection MotorwayHandler::fromMotorway(const EdgeID via_eid, Intersection in
             assignFork(via_eid, intersection[3], intersection[2], intersection[1]);
         }
 
-        else if (countValid(intersection) > 0) // check whether turns exist at all
+        else if (intersection.countEnterable() > 0) // check whether turns exist at all
         {
             // FALLBACK, this should hopefully never be reached
             util::SimpleLogger().Write(logDEBUG)
                 << "Fallback reached from motorway, no continue angle, " << intersection.size()
-                << " roads, " << countValid(intersection) << " valid ones.";
+                << " roads, " << intersection.countEnterable() << " valid ones.";
             return fallback(std::move(intersection));
         }
     }
@@ -345,7 +345,7 @@ Intersection MotorwayHandler::fromMotorway(const EdgeID via_eid, Intersection in
 
 Intersection MotorwayHandler::fromRamp(const EdgeID via_eid, Intersection intersection) const
 {
-    auto num_valid_turns = countValid(intersection);
+    auto num_valid_turns = intersection.countEnterable();
     // ramp straight into a motorway/ramp
     if (intersection.size() == 2 && num_valid_turns == 1)
     {
@@ -491,7 +491,7 @@ Intersection MotorwayHandler::fromRamp(const EdgeID via_eid, Intersection inters
     { // FALLBACK, hopefully this should never been reached
         util::SimpleLogger().Write(logDEBUG) << "Reached fallback on motorway ramp with "
                                              << intersection.size() << " roads and "
-                                             << countValid(intersection) << " valid turns.";
+                                             << intersection.countEnterable() << " valid turns.";
         return fallback(std::move(intersection));
     }
     return intersection;
