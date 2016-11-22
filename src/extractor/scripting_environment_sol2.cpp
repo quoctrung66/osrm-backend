@@ -20,27 +20,15 @@
 #include <memory>
 #include <sstream>
 
-namespace
+namespace sol
 {
-struct LuaNode
+namespace detail
 {
-    auto get_value_by_key(const char *key, const char *default_value = nullptr) const
-    {
-        return node.get_value_by_key(key, default_value);
-    }
-
-    const osmium::Node &node;
-};
-
-struct LuaWay
-{
-    auto get_value_by_key(const char *key, const char *default_value = nullptr) const
-    {
-        return way.get_value_by_key(key, default_value);
-    }
-
-    const osmium::Way &way;
-};
+    template<>
+    struct is_container<osmium::Node> : std::false_type {};
+    template<>
+    struct is_container<osmium::Way> : std::false_type {};
+}
 }
 
 namespace osrm
@@ -132,10 +120,13 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         "u_turn_penalty",
         sol::property(&ProfileProperties::GetUturnPenalty, //
                       &ProfileProperties::SetUturnPenalty),
-        "use_turn_restrictions",
-        &ProfileProperties::use_turn_restrictions,
+        "max_speed_for_map_matching",
+        sol::property(&ProfileProperties::GetMaxSpeedForMapMatching,
+                      &ProfileProperties::SetMaxSpeedForMapMatching),
         "continue_straight_at_waypoint",
         &ProfileProperties::continue_straight_at_waypoint,
+        "use_turn_restrictions",
+        &ProfileProperties::use_turn_restrictions,
         "left_hand_driving",
         &ProfileProperties::left_hand_driving);
 
@@ -150,6 +141,16 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
                                                  &osmium::Location::lat,
                                                  "lon",
                                                  &osmium::Location::lon);
+
+    context.state.new_usertype<osmium::Way>("Way",
+                                            "get_value_by_key",
+                                            &osmium::Way::get_value_by_key,
+                                            "id",
+                                            &osmium::Way::id);
+
+    // TODO: do we want this?
+    //"get_nodes",
+    //&osmium::Way::nodes);
 
     context.state.new_usertype<osmium::Node>("Node",
                                              "location",
@@ -218,12 +219,6 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
     // Keep in mind .location is undefined since we're not using libosmium's location cache
     context.state.new_usertype<osmium::NodeRef>("NodeRef", "id", &osmium::NodeRef::ref);
 
-    context.state.new_usertype<osmium::Way>(
-        "Way", "get_value_by_key", &osmium::Way::get_value_by_key, "id", &osmium::Way::id);
-    // TODO: do we want this?
-    //"get_nodes",
-    //&osmium::Way::nodes);
-
     context.state.new_usertype<InternalExtractorEdge>("EdgeSource",
                                                       "source_coordinate",
                                                       &InternalExtractorEdge::source_coordinate,
@@ -250,10 +245,6 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
     context.state["properties"] = &context.properties;
     context.state["sources"] = &context.sources;
 
-    // TODO: remove?
-    context.state.new_usertype<LuaNode>("LuaNode", "get_value_by_key", &LuaNode::get_value_by_key);
-    context.state.new_usertype<LuaWay>("LuaWay", "get_value_by_key", &LuaWay::get_value_by_key);
-
     //
     // end of register block
     //
@@ -265,7 +256,7 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
     sol::function turn_function = context.state["turn_function"];
     sol::function node_function = context.state["node_function"];
     sol::function way_function = context.state["way_function"];
-    sol::function segment_function = context.state["sgment_function"];
+    sol::function segment_function = context.state["segment_function"];
 
     context.has_turn_penalty_function = turn_function.valid();
     context.has_node_function = node_function.valid();
@@ -345,7 +336,7 @@ void Sol2ScriptingEnvironment::ProcessElements(
 std::vector<std::string> Sol2ScriptingEnvironment::GetNameSuffixList()
 {
     auto &context = GetSol2Context();
-    BOOST_ASSERT(context.state != nullptr);
+    BOOST_ASSERT(context.state.lua_state() != nullptr);
     std::vector<std::string> suffixes_vector;
 
     sol::function get_name_suffix_list = context.state["get_name_suffix_list"];
@@ -361,7 +352,7 @@ std::vector<std::string> Sol2ScriptingEnvironment::GetNameSuffixList()
 std::vector<std::string> Sol2ScriptingEnvironment::GetRestrictions()
 {
     auto &context = GetSol2Context();
-    BOOST_ASSERT(context.state != nullptr);
+    BOOST_ASSERT(context.state.lua_state() != nullptr);
     std::vector<std::string> restrictions;
 
     sol::function get_restrictions = context.state["get_restrictions"];
@@ -377,7 +368,7 @@ std::vector<std::string> Sol2ScriptingEnvironment::GetRestrictions()
 void Sol2ScriptingEnvironment::SetupSources()
 {
     auto &context = GetSol2Context();
-    BOOST_ASSERT(context.state != nullptr);
+    BOOST_ASSERT(context.state.lua_state() != nullptr);
 
     sol::function source_function = context.state["source_function"];
 
@@ -423,22 +414,20 @@ void Sol2ScriptingEnvironment::ProcessSegment(const osrm::util::Coordinate &sour
 
 void Sol2ScriptingContext::processNode(const osmium::Node &node, ExtractionNode &result)
 {
-    BOOST_ASSERT(state != nullptr);
+    BOOST_ASSERT(state.lua_state() != nullptr);
 
     sol::function node_function = state["node_function"];
 
-    const LuaNode luaNode{node};
-    node_function(luaNode, result);
+    node_function(node, result);
 }
 
 void Sol2ScriptingContext::processWay(const osmium::Way &way, ExtractionWay &result)
 {
-    BOOST_ASSERT(state != nullptr);
+    BOOST_ASSERT(state.lua_state() != nullptr);
 
     sol::function way_function = state["way_function"];
 
-    const LuaWay luaWay{way};
-    way_function(luaWay, result);
+    way_function(way, result);
 }
 }
 }
