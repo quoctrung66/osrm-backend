@@ -428,7 +428,9 @@ else()
   endif()
 
   set(USED_LUA_LIBRARIES ${LUA_LIBRARY})
-  add_dependency_includes(${LUA_INCLUDE_DIR})
+  add_dependency_includes("")
+  # TODO: this needs a proper Lua check
+  # similar to lines 472 (check find_package(Lua)
 
   find_package(EXPAT REQUIRED)
   add_dependency_includes(${EXPAT_INCLUDE_DIRS})
