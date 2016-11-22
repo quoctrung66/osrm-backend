@@ -427,11 +427,6 @@ else()
     set(TBB_LIBRARIES ${TBB_DEBUG_LIBRARIES})
   endif()
 
-  set(USED_LUA_LIBRARIES ${LUA_LIBRARY})
-  add_dependency_includes("")
-  # TODO: this needs a proper Lua check
-  # similar to lines 472 (check find_package(Lua)
-
   find_package(EXPAT REQUIRED)
   add_dependency_includes(${EXPAT_INCLUDE_DIRS})
 
@@ -509,6 +504,7 @@ ELSE()
 ENDIF()
 
 set(USED_LUA_LIBRARIES ${LUA_LIBRARY})
+add_dependency_includes(${LUA_INCLUDE_DIR})
 
 if(NOT WIN32 AND NOT Boost_USE_STATIC_LIBS)
   add_dependency_defines(-DBOOST_TEST_DYN_LINK)
