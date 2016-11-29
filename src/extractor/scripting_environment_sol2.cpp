@@ -22,13 +22,10 @@
 
 namespace sol
 {
-namespace detail
-{
     template<>
     struct is_container<osmium::Node> : std::false_type {};
     template<>
     struct is_container<osmium::Way> : std::false_type {};
-}
 }
 
 namespace osrm
