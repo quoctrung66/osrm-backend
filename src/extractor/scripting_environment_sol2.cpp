@@ -33,6 +33,20 @@ namespace osrm
 namespace extractor
 {
 
+template <class T>
+auto get_value_by_key(T const &object, const char *key) -> decltype(object.get_value_by_key(key))
+{
+    auto v = object.get_value_by_key(key);
+    if (v && *v)
+    { // non-empty string?
+        return v;
+    }
+    else
+    {
+        return "";
+    }
+}
+
 Sol2ScriptingEnvironment::Sol2ScriptingEnvironment(const std::string &file_name)
     : file_name(file_name)
 {
@@ -141,7 +155,7 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
 
     context.state.new_usertype<osmium::Way>("Way",
                                             "get_value_by_key",
-                                            &osmium::Way::get_value_by_key,
+                                            &get_value_by_key<osmium::Way>,
                                             "id",
                                             &osmium::Way::id);
 
@@ -153,7 +167,7 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
                                              "location",
                                              &osmium::Node::location,
                                              "get_value_by_key",
-                                             &osmium::Node::get_value_by_key,
+                                             &get_value_by_key<osmium::Node>,
                                              "id",
                                              &osmium::Node::id);
 
@@ -176,7 +190,10 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
                       &guidance::RoadClassification::SetLowPriorityFlag),
         "road_priority_class",
         sol::property(&guidance::RoadClassification::GetClass,
-                      &guidance::RoadClassification::SetClass));
+                      &guidance::RoadClassification::SetClass),
+        "num_lanes",
+        sol::property(&guidance::RoadClassification::GetNumberOfLanes,
+                      &guidance::RoadClassification::SetNumberOfLanes));
 
     context.state.new_usertype<ExtractionWay>(
         "ResultWay",
