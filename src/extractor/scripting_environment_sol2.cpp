@@ -8,6 +8,7 @@
 #include "extractor/profile_properties.hpp"
 #include "extractor/raster_source.hpp"
 #include "extractor/restriction_parser.hpp"
+#include "util/coordinate.hpp"
 #include "util/exception.hpp"
 #include "util/lua_util.hpp"
 #include "util/simple_logger.hpp"
@@ -46,6 +47,18 @@ auto get_value_by_key(T const &object, const char *key) -> decltype(object.get_v
         return "";
     }
 }
+
+template <class T> double latToDouble(T const &object)
+{
+    return static_cast<double>(util::toFloating(object.lat));
+}
+
+template <class T> double lonToDouble(T const &object)
+{
+    return static_cast<double>(util::toFloating(object.lon));
+}
+
+auto get_nodes_for_way(const osmium::Way &way) -> decltype(way.nodes()) { return way.nodes(); }
 
 Sol2ScriptingEnvironment::Sol2ScriptingEnvironment(const std::string &file_name)
     : file_name(file_name)
@@ -147,7 +160,7 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         static_cast<void (std::vector<std::string>::*)(const std::string &)>(
             &std::vector<std::string>::push_back));
 
-    context.state.new_usertype<osmium::Location>("Location", //
+    context.state.new_usertype<osmium::Location>("Location",
                                                  "lat",
                                                  &osmium::Location::lat,
                                                  "lon",
@@ -155,17 +168,19 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
 
     context.state.new_usertype<osmium::Way>("Way",
                                             "get_value_by_key",
+                                            &osmium::Way::get_value_by_key,
+                                            "get_value_by_key",
                                             &get_value_by_key<osmium::Way>,
                                             "id",
-                                            &osmium::Way::id);
-
-    // TODO: do we want this?
-    //"get_nodes",
-    //&osmium::Way::nodes);
+                                            &osmium::Way::id,
+                                            "get_nodes",
+                                            &get_nodes_for_way);
 
     context.state.new_usertype<osmium::Node>("Node",
                                              "location",
                                              &osmium::Node::location,
+                                             "get_value_by_key",
+                                             &osmium::Node::get_value_by_key,
                                              "get_value_by_key",
                                              &get_value_by_key<osmium::Node>,
                                              "id",
@@ -209,6 +224,8 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         &ExtractionWay::pronunciation,
         "destinations",
         &ExtractionWay::destinations,
+        "circular",
+        &ExtractionWay::circular,
         "roundabout",
         &ExtractionWay::roundabout,
         "is_access_restricted",
@@ -242,19 +259,17 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
     context.state.new_usertype<InternalExtractorEdge::WeightData>(
         "WeightData", "speed", &InternalExtractorEdge::WeightData::speed);
 
-    /* TODO: Impl. for raster feature: needs types-to-float property
     context.state.new_usertype<ExternalMemoryNode>("EdgeTarget",
-        "lon", &lonToDouble<ExternalMemoryNode>
+        "lon", &lonToDouble<ExternalMemoryNode>,
         "lat", &latToDouble<ExternalMemoryNode>);
 
     context.state.new_usertype<util::Coordinate>("Coordinate",
              "lon", &lonToDouble<util::Coordinate>,
              "lat", &latToDouble<util::Coordinate>);
 
-    context.state.new_type<RasterDatum>("RasterDatum",
+    context.state.new_usertype<RasterDatum>("RasterDatum",
             "datum", &RasterDatum::datum,
             "invalid_data", &RasterDatum::get_invalid);
-    */
 
     context.state["properties"] = &context.properties;
     context.state["sources"] = &context.sources;
