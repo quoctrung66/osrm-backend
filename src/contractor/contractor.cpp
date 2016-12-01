@@ -309,10 +309,13 @@ parse_segment_lookup_from_csv_files(const std::vector<std::string> &segment_spee
         std::uint64_t to_node_id{};
         unsigned speed{};
 
+        std::size_t line_number = 0;
+
         std::for_each(
             segment_speed_file_reader.GetLineIteratorBegin(),
             segment_speed_file_reader.GetLineIteratorEnd(),
             [&](const std::string &line) {
+                ++line_number;
 
                 using namespace boost::spirit::qi;
 
@@ -329,7 +332,10 @@ parse_segment_lookup_from_csv_files(const std::vector<std::string> &segment_spee
                           speed); //
 
                 if (!ok || it != last)
-                    throw util::exception{"Segment speed file " + filename + " malformed"};
+                {
+                    const std::string message{"Segment speed file " + filename + " malformed on line "+std::to_string(line_number)};
+                    throw util::exception(message);
+                }
 
                 SegmentSpeedSource val{{OSMNodeID{from_node_id}, OSMNodeID{to_node_id}},
                                        {speed, static_cast<std::uint8_t>(file_id)}};
@@ -399,10 +405,13 @@ parse_turn_penalty_lookup_from_csv_files(const std::vector<std::string> &turn_pe
         std::uint64_t to_node_id{};
         double penalty{};
 
+        std::size_t line_number = 0;
+
         std::for_each(
             turn_penalty_file_reader.GetLineIteratorBegin(),
             turn_penalty_file_reader.GetLineIteratorEnd(),
             [&](const std::string &line) {
+                ++line_number;
 
                 using namespace boost::spirit::qi;
 
@@ -420,7 +429,10 @@ parse_turn_penalty_lookup_from_csv_files(const std::vector<std::string> &turn_pe
                                       penalty); //
 
                 if (!ok || it != last)
-                    throw util::exception{"Turn penalty file " + filename + " malformed"};
+                {
+                    const std::string message{"Turn penalty file " + filename + " malformed on line "+std::to_string(line_number)};
+                    throw util::exception(message);
+                }
 
                 TurnPenaltySource val{
                     {OSMNodeID{from_node_id}, OSMNodeID{via_node_id}, OSMNodeID{to_node_id}},
@@ -756,7 +768,8 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         std::ofstream geometry_stream(geometry_filename, std::ios::binary);
         if (!geometry_stream)
         {
-            throw util::exception("Failed to open " + geometry_filename + " for writing");
+            const std::string message{"Failed to open " + geometry_filename + " for writing"};
+            throw util::exception(std::move(message));
         }
         const unsigned number_of_indices = m_geometry_indices.size();
         const unsigned number_of_compressed_geometries = m_geometry_node_list.size();
@@ -777,7 +790,8 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         std::ofstream datasource_stream(datasource_indexes_filename, std::ios::binary);
         if (!datasource_stream)
         {
-            throw util::exception("Failed to open " + datasource_indexes_filename + " for writing");
+            const std::string message{"Failed to open " + datasource_indexes_filename + " for writing"};
+            throw util::exception(message);
         }
         std::uint64_t number_of_datasource_entries = m_geometry_datasource.size();
         datasource_stream.write(reinterpret_cast<const char *>(&number_of_datasource_entries),
@@ -793,7 +807,8 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         std::ofstream datasource_stream(datasource_names_filename, std::ios::binary);
         if (!datasource_stream)
         {
-            throw util::exception("Failed to open " + datasource_names_filename + " for writing");
+            const std::string message{"Failed to open " + datasource_names_filename + " for writing"};
+            throw util::exception(message);
         }
         datasource_stream << "lua profile" << std::endl;
         for (auto const &name : segment_speed_filenames)
