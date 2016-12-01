@@ -23,10 +23,12 @@
 
 namespace sol
 {
-    template<>
-    struct is_container<osmium::Node> : std::false_type {};
-    template<>
-    struct is_container<osmium::Way> : std::false_type {};
+template <> struct is_container<osmium::Node> : std::false_type
+{
+};
+template <> struct is_container<osmium::Way> : std::false_type
+{
+};
 }
 
 namespace osrm
@@ -34,6 +36,19 @@ namespace osrm
 namespace extractor
 {
 
+template <class T, class D>
+const char* get_value_by_key(T const &object, const char *key, D const default_value)
+{
+    auto v = get_value_by_key(object, key);
+    if (v && *v)
+    { // non-empty string?
+        return v;
+    }
+    else
+    {
+        return default_value;
+    }
+}
 template <class T>
 auto get_value_by_key(T const &object, const char *key) -> decltype(object.get_value_by_key(key))
 {
@@ -160,15 +175,10 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         static_cast<void (std::vector<std::string>::*)(const std::string &)>(
             &std::vector<std::string>::push_back));
 
-    context.state.new_usertype<osmium::Location>("Location",
-                                                 "lat",
-                                                 &osmium::Location::lat,
-                                                 "lon",
-                                                 &osmium::Location::lon);
+    context.state.new_usertype<osmium::Location>(
+        "Location", "lat", &osmium::Location::lat, "lon", &osmium::Location::lon);
 
     context.state.new_usertype<osmium::Way>("Way",
-                                            "get_value_by_key",
-                                            &osmium::Way::get_value_by_key,
                                             "get_value_by_key",
                                             &get_value_by_key<osmium::Way>,
                                             "id",
@@ -179,8 +189,6 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
     context.state.new_usertype<osmium::Node>("Node",
                                              "location",
                                              &osmium::Node::location,
-                                             "get_value_by_key",
-                                             &osmium::Node::get_value_by_key,
                                              "get_value_by_key",
                                              &get_value_by_key<osmium::Node>,
                                              "id",
@@ -217,27 +225,27 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         "backward_speed",
         &ExtractionWay::backward_speed,
         "name",
-        &ExtractionWay::name,
+        sol::property(&ExtractionWay::GetName, &ExtractionWay::SetName),
         "ref",
-        &ExtractionWay::ref,
+        sol::property(&ExtractionWay::GetRef, &ExtractionWay::SetRef),
         "pronunciation",
-        &ExtractionWay::pronunciation,
+        sol::property(&ExtractionWay::GetPronunciation, &ExtractionWay::SetPronunciation),
         "destinations",
-        &ExtractionWay::destinations,
-        "circular",
-        &ExtractionWay::circular,
+        sol::property(&ExtractionWay::GetDestinations, &ExtractionWay::SetDestinations),
+        "turn_lanes_forward",
+        sol::property(&ExtractionWay::GetTurnLanesForward, &ExtractionWay::SetTurnLanesForward),
+        "turn_lanes_backward",
+        sol::property(&ExtractionWay::GetTurnLanesBackward, &ExtractionWay::SetTurnLanesBackward),
         "roundabout",
         &ExtractionWay::roundabout,
+        "circular",
+        &ExtractionWay::circular,
         "is_access_restricted",
         &ExtractionWay::is_access_restricted,
         "is_startpoint",
         &ExtractionWay::is_startpoint,
         "duration",
         &ExtractionWay::duration,
-        "turn_lanes_forward",
-        &ExtractionWay::turn_lanes_forward,
-        "turn_lanes_backward",
-        &ExtractionWay::turn_lanes_backward,
         "road_classification",
         &ExtractionWay::road_classification,
         "forward_mode",
@@ -260,16 +268,16 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         "WeightData", "speed", &InternalExtractorEdge::WeightData::speed);
 
     context.state.new_usertype<ExternalMemoryNode>("EdgeTarget",
-        "lon", &lonToDouble<ExternalMemoryNode>,
-        "lat", &latToDouble<ExternalMemoryNode>);
+                                                   "lon",
+                                                   &lonToDouble<ExternalMemoryNode>,
+                                                   "lat",
+                                                   &latToDouble<ExternalMemoryNode>);
 
-    context.state.new_usertype<util::Coordinate>("Coordinate",
-             "lon", &lonToDouble<util::Coordinate>,
-             "lat", &latToDouble<util::Coordinate>);
+    context.state.new_usertype<util::Coordinate>(
+        "Coordinate", "lon", &lonToDouble<util::Coordinate>, "lat", &latToDouble<util::Coordinate>);
 
-    context.state.new_usertype<RasterDatum>("RasterDatum",
-            "datum", &RasterDatum::datum,
-            "invalid_data", &RasterDatum::get_invalid);
+    context.state.new_usertype<RasterDatum>(
+        "RasterDatum", "datum", &RasterDatum::datum, "invalid_data", &RasterDatum::get_invalid);
 
     context.state["properties"] = &context.properties;
     context.state["sources"] = &context.sources;
