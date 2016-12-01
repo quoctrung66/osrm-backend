@@ -9,6 +9,7 @@ enum LogLevel
 {
     logINFO,
     logWARNING,
+    logERROR,
     logDEBUG
 };
 
