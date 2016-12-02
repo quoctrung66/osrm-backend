@@ -1,6 +1,7 @@
 #ifndef OSRM_GUIDANCE_TURN_INSTRUCTION_HPP_
 #define OSRM_GUIDANCE_TURN_INSTRUCTION_HPP_
 
+#include <algorithm>
 #include <cstdint>
 
 #include <boost/assert.hpp>
