@@ -47,7 +47,7 @@ Intersection triviallyMatchLanesToTurns(Intersection intersection,
                                         const LaneDataVector &lane_data,
                                         const util::NodeBasedDynamicGraph &node_based_graph,
                                         const LaneDescriptionID lane_string_id,
-                                        LaneDataIdMap &lane_data_to_id);
+                                        util::guidance::LaneDataIdMap &lane_data_to_id);
 
 } // namespace lanes
 } // namespace guidance

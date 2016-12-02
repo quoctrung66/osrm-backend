@@ -3,6 +3,8 @@
 #include "util/bearing.hpp"
 #include "util/guidance/toolkit.hpp"
 
+using osrm::util::guidance::angularDeviation;
+
 namespace osrm
 {
 namespace extractor

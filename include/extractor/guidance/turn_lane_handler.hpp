@@ -74,7 +74,7 @@ class TurnLaneHandler
                     std::vector<TurnLaneType::Mask> &turn_lane_masks,
                     LaneDescriptionMap &lane_description_map,
                     const TurnAnalysis &turn_analysis,
-                    LaneDataIdMap &id_map);
+                    util::guidance::LaneDataIdMap &id_map);
 
     ~TurnLaneHandler();
 
@@ -91,7 +91,7 @@ class TurnLaneHandler
     std::vector<TurnLaneType::Mask> &turn_lane_masks;
     LaneDescriptionMap &lane_description_map;
     const TurnAnalysis &turn_analysis;
-    LaneDataIdMap &id_map;
+    util::guidance::LaneDataIdMap &id_map;
 
     // Find out which scenario we have to handle
     TurnLaneScenario deduceScenario(const NodeID at,

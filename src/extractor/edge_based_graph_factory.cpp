@@ -352,7 +352,7 @@ void EdgeBasedGraphFactory::GenerateEdgeExpandedEdges(
                                          street_name_suffix_table,
                                          profile_properties);
 
-    guidance::LaneDataIdMap lane_data_map;
+    util::guidance::LaneDataIdMap lane_data_map;
     guidance::lanes::TurnLaneHandler turn_lane_handler(*m_node_based_graph,
                                                        turn_lane_offsets,
                                                        turn_lane_masks,

@@ -1,5 +1,6 @@
 #include "extractor/guidance/intersection.hpp"
 #include "extractor/guidance/toolkit.hpp"
+#include "util/guidance/toolkit.hpp"
 
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/range/algorithm/find_if.hpp>
@@ -9,6 +10,8 @@
 #include <algorithm>
 #include <functional>
 #include <limits>
+
+using osrm::util::guidance::angularDeviation;
 
 namespace osrm
 {

@@ -7,6 +7,8 @@
 
 #include <functional>
 
+using osrm::util::guidance::angularDeviation;
+
 namespace osrm
 {
 namespace extractor
@@ -200,12 +202,13 @@ Intersection triviallyMatchLanesToTurns(Intersection intersection,
                                         const LaneDataVector &lane_data,
                                         const util::NodeBasedDynamicGraph &node_based_graph,
                                         const LaneDescriptionID lane_string_id,
-                                        LaneDataIdMap &lane_data_to_id)
+                                        util::guidance::LaneDataIdMap &lane_data_to_id)
 {
     std::size_t road_index = 1, lane = 0;
 
     const auto matchRoad = [&](ConnectedRoad &road, const TurnLaneData &data) {
-        LaneTupleIdPair key{{LaneID(data.to - data.from + 1), data.from}, lane_string_id};
+        util::guidance::LaneTupleIdPair key{{LaneID(data.to - data.from + 1), data.from},
+                                            lane_string_id};
 
         auto lane_data_id = boost::numeric_cast<LaneDataID>(lane_data_to_id.size());
         const auto it = lane_data_to_id.find(key);

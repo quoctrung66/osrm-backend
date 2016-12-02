@@ -150,6 +150,66 @@ inline bool operator==(const TurnInstruction lhs, const TurnInstruction rhs)
     return lhs.type == rhs.type && lhs.direction_modifier == rhs.direction_modifier;
 }
 
+// check if a instruction is associated in any form with a roundabout
+inline bool hasRoundaboutType(const TurnInstruction instruction)
+{
+    using namespace extractor::guidance::TurnType;
+    const constexpr TurnType::Enum valid_types[] = {TurnType::EnterRoundabout,
+                                                    TurnType::EnterAndExitRoundabout,
+                                                    TurnType::EnterRotary,
+                                                    TurnType::EnterAndExitRotary,
+                                                    TurnType::EnterRoundaboutIntersection,
+                                                    TurnType::EnterAndExitRoundaboutIntersection,
+                                                    TurnType::EnterRoundaboutAtExit,
+                                                    TurnType::ExitRoundabout,
+                                                    TurnType::EnterRotaryAtExit,
+                                                    TurnType::ExitRotary,
+                                                    TurnType::EnterRoundaboutIntersectionAtExit,
+                                                    TurnType::ExitRoundaboutIntersection,
+                                                    TurnType::StayOnRoundabout};
+
+    const auto *first = valid_types;
+    const auto *last = first + sizeof(valid_types) / sizeof(valid_types[0]);
+
+    return std::find(first, last, instruction.type) != last;
+}
+
+inline bool entersRoundabout(const extractor::guidance::TurnInstruction instruction)
+{
+    return (instruction.type == extractor::guidance::TurnType::EnterRoundabout ||
+            instruction.type == extractor::guidance::TurnType::EnterRotary ||
+            instruction.type == extractor::guidance::TurnType::EnterRoundaboutIntersection ||
+            instruction.type == extractor::guidance::TurnType::EnterRoundaboutAtExit ||
+            instruction.type == extractor::guidance::TurnType::EnterRotaryAtExit ||
+            instruction.type == extractor::guidance::TurnType::EnterRoundaboutIntersectionAtExit ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRoundabout ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRotary ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRoundaboutIntersection);
+}
+
+inline bool leavesRoundabout(const extractor::guidance::TurnInstruction instruction)
+{
+    return (instruction.type == extractor::guidance::TurnType::ExitRoundabout ||
+            instruction.type == extractor::guidance::TurnType::ExitRotary ||
+            instruction.type == extractor::guidance::TurnType::ExitRoundaboutIntersection ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRoundabout ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRotary ||
+            instruction.type == extractor::guidance::TurnType::EnterAndExitRoundaboutIntersection);
+}
+
+inline bool staysOnRoundabout(const extractor::guidance::TurnInstruction instruction)
+{
+    return instruction.type == extractor::guidance::TurnType::StayOnRoundabout;
+}
+
+// Silent Turn Instructions are not to be mentioned to the outside world but
+inline bool isSilent(const extractor::guidance::TurnInstruction instruction)
+{
+    return instruction.type == extractor::guidance::TurnType::NoTurn ||
+           instruction.type == extractor::guidance::TurnType::Suppressed ||
+           instruction.type == extractor::guidance::TurnType::StayOnRoundabout;
+}
+
 } // namespace guidance
 } // namespace extractor
 } // namespace osrm
