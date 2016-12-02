@@ -10,8 +10,8 @@
 
 #include <boost/functional/hash.hpp>
 
-#include "util/typedefs.hpp"
 #include "util/json_container.hpp"
+#include "util/typedefs.hpp"
 
 namespace osrm
 {

@@ -6,8 +6,8 @@
 #include "util/guidance/name_announcements.hpp"
 
 #include <algorithm>
-#include <utility>
 #include <cmath>
+#include <utility>
 
 #include <boost/assert.hpp>
 

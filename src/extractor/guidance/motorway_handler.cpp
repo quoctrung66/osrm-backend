@@ -481,7 +481,7 @@ Intersection MotorwayHandler::fromRamp(const EdgeID via_eid, Intersection inters
         }
     }
     else
-    { 
+    {
         return fallback(std::move(intersection));
     }
     return intersection;

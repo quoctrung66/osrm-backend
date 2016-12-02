@@ -1,8 +1,8 @@
 #ifndef BEARING_HPP
 #define BEARING_HPP
 
-#include <boost/assert.hpp>
 #include <algorithm>
+#include <boost/assert.hpp>
 #include <cmath>
 #include <string>
 
