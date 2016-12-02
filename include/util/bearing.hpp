@@ -2,6 +2,7 @@
 #define BEARING_HPP
 
 #include <boost/assert.hpp>
+#include <algorithm>
 #include <cmath>
 #include <string>
 
