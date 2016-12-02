@@ -7,7 +7,6 @@
 
 #include "extractor/guidance/turn_instruction.hpp"
 #include "util/bearing.hpp"
-#include "util/guidance/toolkit.hpp"
 #include "util/node_based_graph.hpp"
 #include "util/typedefs.hpp" // EdgeID
 

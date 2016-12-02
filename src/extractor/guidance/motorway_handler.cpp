@@ -2,7 +2,8 @@
 #include "extractor/guidance/constants.hpp"
 #include "extractor/guidance/road_classification.hpp"
 
-#include "util/guidance/toolkit.hpp"
+#include "util/bearing.hpp"
+#include "util/guidance/name_announcements.hpp"
 #include "util/simple_logger.hpp"
 
 #include <limits>
@@ -10,7 +11,7 @@
 
 #include <boost/assert.hpp>
 
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 using osrm::extractor::guidance::getTurnDirection;
 
 namespace osrm

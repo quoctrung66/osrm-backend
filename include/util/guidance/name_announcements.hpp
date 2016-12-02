@@ -1,5 +1,5 @@
-#ifndef OSRM_UTIL_GUIDANCE_TOOLKIT_HPP_
-#define OSRM_UTIL_GUIDANCE_TOOLKIT_HPP_
+#ifndef OSRM_UTIL_GUIDANCE_NAME_ANNOUNCEMENT_HPP_
+#define OSRM_UTIL_GUIDANCE_NAME_ANNOUNCEMENT_HPP_
 
 /* A set of tools required for guidance in both pre and post-processing */
 
@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/algorithm/string.hpp>
@@ -21,12 +22,6 @@ namespace util
 {
 namespace guidance
 {
-
-inline double angularDeviation(const double angle, const double from)
-{
-    const double deviation = std::abs(angle - from);
-    return std::min(360 - deviation, deviation);
-}
 
 // Name Change Logic
 // Used both during Extraction as well as during Post-Processing
@@ -187,4 +182,4 @@ inline bool requiresNameAnnounced(const NameID from_name_id,
 } // namespace util
 } // namespace osrm
 
-#endif /* OSRM_UTIL_GUIDANCE_TOOLKIT_HPP_ */
+#endif /* OSRM_UTIL_GUIDANCE_NAME_ANNOUNCEMENT_HPP_ */

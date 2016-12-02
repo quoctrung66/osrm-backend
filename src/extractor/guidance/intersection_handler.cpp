@@ -1,16 +1,15 @@
 #include "extractor/guidance/intersection_handler.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "util/guidance/toolkit.hpp"
 
 #include "util/coordinate_calculation.hpp"
-#include "util/guidance/toolkit.hpp"
+#include "util/guidance/name_announcements.hpp"
 #include "util/simple_logger.hpp"
 
 #include <algorithm>
 #include <cstddef>
 
 using EdgeData = osrm::util::NodeBasedDynamicGraph::EdgeData;
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 
 namespace osrm
 {

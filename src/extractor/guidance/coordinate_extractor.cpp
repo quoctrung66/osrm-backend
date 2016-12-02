@@ -1,6 +1,5 @@
 #include "extractor/guidance/coordinate_extractor.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "util/guidance/toolkit.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -12,8 +11,9 @@
 #include <utility>
 
 #include <boost/range/algorithm/transform.hpp>
+#include "util/bearing.hpp"
 
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 
 namespace osrm
 {

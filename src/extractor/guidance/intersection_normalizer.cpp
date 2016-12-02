@@ -1,8 +1,8 @@
 #include "extractor/guidance/intersection_normalizer.hpp"
 #include "util/bearing.hpp"
-#include "util/guidance/toolkit.hpp"
+#include "util/guidance/name_announcements.hpp"
 
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 
 namespace osrm
 {

@@ -2,7 +2,6 @@
 #include "extractor/guidance/constants.hpp"
 
 #include "util/bearing.hpp"
-#include "util/guidance/toolkit.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -118,9 +117,9 @@ IntersectionGenerator::ComputeIntersectionShape(const NodeID node_at_center_of_i
                                      return node_based_graph.GetTarget(data.eid) == *sorting_base;
                                  });
                 if (itr != intersection.end())
-                    return util::bearing::reverseBearing(itr->bearing);
+                    return util::reverseBearing(itr->bearing);
             }
-            return util::bearing::reverseBearing(intersection.begin()->bearing);
+            return util::reverseBearing(intersection.begin()->bearing);
         }();
         std::sort(
             intersection.begin(), intersection.end(), makeCompareShapeDataByBearing(base_bearing));
@@ -279,7 +278,7 @@ IntersectionView IntersectionGenerator::TransformIntersectionShapeIntoView(
                 normalised_intersection.end(),
                 [&](const IntersectionShapeData &road) { return road.eid == merged_into_id; });
             BOOST_ASSERT(merged_u_turn != normalised_intersection.end());
-            return util::bearing::reverseBearing(merged_u_turn->bearing);
+            return util::reverseBearing(merged_u_turn->bearing);
         }
         else
         {
@@ -289,7 +288,7 @@ IntersectionView IntersectionGenerator::TransformIntersectionShapeIntoView(
                              connect_to_previous_node);
             BOOST_ASSERT(uturn_edge_at_normalised_intersection_itr !=
                          normalised_intersection.end());
-            return util::bearing::reverseBearing(
+            return util::reverseBearing(
                 uturn_edge_at_normalised_intersection_itr->bearing);
         }
     }();
@@ -303,7 +302,7 @@ IntersectionView IntersectionGenerator::TransformIntersectionShapeIntoView(
                        return IntersectionViewData(
                            road,
                            is_allowed_turn(road),
-                           util::bearing::angleBetweenBearings(uturn_bearing, road.bearing));
+                           util::angleBetweenBearings(uturn_bearing, road.bearing));
                    });
 
     const auto uturn_edge_at_intersection_view_itr =

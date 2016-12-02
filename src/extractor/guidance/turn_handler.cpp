@@ -1,7 +1,8 @@
 #include "extractor/guidance/turn_handler.hpp"
 #include "extractor/guidance/constants.hpp"
 
-#include "util/guidance/toolkit.hpp"
+#include "util/bearing.hpp"
+#include "util/guidance/name_announcements.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -11,7 +12,7 @@
 
 using EdgeData = osrm::util::NodeBasedDynamicGraph::EdgeData;
 using osrm::extractor::guidance::getTurnDirection;
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 
 namespace osrm
 {

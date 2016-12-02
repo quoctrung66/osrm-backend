@@ -1,12 +1,12 @@
 #include "extractor/guidance/turn_lane_matcher.hpp"
-#include "util/guidance/toolkit.hpp"
+#include "util/bearing.hpp"
 
 #include <boost/assert.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <functional>
 
-using osrm::util::guidance::angularDeviation;
+using osrm::util::angularDeviation;
 
 namespace osrm
 {
