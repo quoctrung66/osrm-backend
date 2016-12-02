@@ -3,9 +3,9 @@
 #include "extractor/guidance/turn_discovery.hpp"
 #include "extractor/guidance/turn_lane_augmentation.hpp"
 #include "extractor/guidance/turn_lane_matcher.hpp"
+#include "util/bearing.hpp"
 #include "util/simple_logger.hpp"
 #include "util/typedefs.hpp"
-#include "util/bearing.hpp"
 
 #include <cstddef>
 #include <cstdint>

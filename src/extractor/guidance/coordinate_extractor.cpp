@@ -10,8 +10,8 @@
 #include <tuple>
 #include <utility>
 
-#include <boost/range/algorithm/transform.hpp>
 #include "util/bearing.hpp"
+#include <boost/range/algorithm/transform.hpp>
 
 using osrm::util::angularDeviation;
 

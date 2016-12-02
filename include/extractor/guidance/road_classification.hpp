@@ -6,8 +6,8 @@
 #include <string>
 #include <unordered_map>
 
-#include <osmium/osm.hpp>
 #include "extractor/guidance/constants.hpp"
+#include <osmium/osm.hpp>
 
 namespace osrm
 {

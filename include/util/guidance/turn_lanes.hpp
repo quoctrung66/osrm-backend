@@ -4,8 +4,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "util/typedefs.hpp"
 

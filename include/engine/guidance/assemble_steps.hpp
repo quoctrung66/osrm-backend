@@ -214,14 +214,13 @@ inline std::vector<RouteStep> assembleSteps(const datafacade::BaseDataFacade &fa
     BOOST_ASSERT(segment_index == number_of_segments - 1);
     bearings = detail::getArriveBearings(leg_geometry);
 
-    intersection = {
-        target_node.location,
-        std::vector<short>({static_cast<short>(util::reverseBearing(bearings.first))}),
-        std::vector<bool>({true}),
-        0,
-        Intersection::NO_INDEX,
-        util::guidance::LaneTuple(),
-        {}};
+    intersection = {target_node.location,
+                    std::vector<short>({static_cast<short>(util::reverseBearing(bearings.first))}),
+                    std::vector<bool>({true}),
+                    0,
+                    Intersection::NO_INDEX,
+                    util::guidance::LaneTuple(),
+                    {}};
 
     // This step has length zero, the only reason we need it is the target location
     maneuver = {intersection.location,

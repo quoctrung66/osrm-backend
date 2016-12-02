@@ -288,8 +288,7 @@ IntersectionView IntersectionGenerator::TransformIntersectionShapeIntoView(
                              connect_to_previous_node);
             BOOST_ASSERT(uturn_edge_at_normalised_intersection_itr !=
                          normalised_intersection.end());
-            return util::reverseBearing(
-                uturn_edge_at_normalised_intersection_itr->bearing);
+            return util::reverseBearing(uturn_edge_at_normalised_intersection_itr->bearing);
         }
     }();
 
