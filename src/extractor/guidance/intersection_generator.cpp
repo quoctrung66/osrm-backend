@@ -1,6 +1,5 @@
 #include "extractor/guidance/intersection_generator.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "extractor/guidance/toolkit.hpp"
 
 #include "util/bearing.hpp"
 #include "util/guidance/toolkit.hpp"
@@ -58,8 +57,15 @@ IntersectionGenerator::ComputeIntersectionShape(const NodeID node_at_center_of_i
     const util::Coordinate turn_coordinate = node_info_list[node_at_center_of_intersection];
 
     // number of lanes at the intersection changes how far we look down the road
-    const auto intersection_lanes =
-        getLaneCountAtIntersection(node_at_center_of_intersection, node_based_graph);
+    const auto intersection_lanes = [&]() {
+        std::uint8_t lanes = 0;
+        for (const EdgeID onto_edge :
+             node_based_graph.GetAdjacentEdgeRange(node_at_center_of_intersection))
+            lanes = std::max(
+                lanes,
+                node_based_graph.GetEdgeData(onto_edge).road_classification.GetNumberOfLanes());
+        return lanes;
+    }();
 
     for (const EdgeID edge_connected_to_intersection :
          node_based_graph.GetAdjacentEdgeRange(node_at_center_of_intersection))

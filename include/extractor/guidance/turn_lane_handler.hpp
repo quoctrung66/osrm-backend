@@ -2,7 +2,6 @@
 #define OSRM_EXTRACTOR_GUIDANCE_TURN_LANE_HANDLER_HPP_
 
 #include "extractor/guidance/intersection.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "extractor/guidance/turn_analysis.hpp"
 #include "extractor/guidance/turn_lane_data.hpp"
 #include "extractor/guidance/turn_lane_types.hpp"

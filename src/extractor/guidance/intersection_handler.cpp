@@ -1,6 +1,5 @@
 #include "extractor/guidance/intersection_handler.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "util/guidance/toolkit.hpp"
 
 #include "util/coordinate_calculation.hpp"

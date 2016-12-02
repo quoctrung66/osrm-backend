@@ -1,6 +1,5 @@
 #include "extractor/guidance/coordinate_extractor.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "util/guidance/toolkit.hpp"
 
 #include <algorithm>
@@ -1141,7 +1140,8 @@ CoordinateExtractor::RegressionLine(const std::vector<util::Coordinate> &coordin
         return {coordinates.front(), coordinates.back()};
 
     // compute the regression vector based on the sum of least squares
-    const auto regression_line = leastSquareRegression(sampled_coordinates);
+    const auto regression_line =
+        util::coordinate_calculation::leastSquareRegression(sampled_coordinates);
     const auto coord_between_front =
         util::coordinate_calculation::projectPointOnSegment(
             regression_line.first, regression_line.second, coordinates.front())

@@ -10,7 +10,6 @@
 #include "util/simple_logger.hpp"
 #include "util/timing_util.hpp"
 
-#include "extractor/guidance/toolkit.hpp"
 #include "extractor/guidance/turn_analysis.hpp"
 #include "extractor/guidance/turn_lane_handler.hpp"
 #include "extractor/scripting_environment.hpp"

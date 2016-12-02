@@ -1,5 +1,4 @@
 #include "extractor/guidance/intersection.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "util/guidance/toolkit.hpp"
 
 #include <boost/range/adaptor/transformed.hpp>

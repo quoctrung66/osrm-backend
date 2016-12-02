@@ -1,5 +1,4 @@
 #include "extractor/guidance/intersection_normalizer.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "util/bearing.hpp"
 #include "util/guidance/toolkit.hpp"
 

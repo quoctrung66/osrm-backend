@@ -1,6 +1,5 @@
 #include "extractor/guidance/roundabout_handler.hpp"
 #include "extractor/guidance/constants.hpp"
-#include "extractor/guidance/toolkit.hpp"
 
 #include "util/coordinate_calculation.hpp"
 #include "util/guidance/toolkit.hpp"
@@ -182,12 +181,21 @@ bool RoundaboutHandler::qualifiesAsRoundaboutIntersection(
                 // there is a single non-roundabout edge
                 const auto src_coordinate = getCoordinate(node);
 
-                const auto next_coordinate = coordinate_extractor.GetCoordinateAlongRoad(
-                    node,
-                    edge,
-                    edge_data.reversed,
-                    node_based_graph.GetTarget(edge),
-                    getLaneCountAtIntersection(node, node_based_graph));
+                const auto number_of_lanes_at_intersection = [&]() {
+                    std::uint8_t lanes = 0;
+                    for (const EdgeID onto_edge : node_based_graph.GetAdjacentEdgeRange(node))
+                        lanes = std::max(lanes,
+                                         node_based_graph.GetEdgeData(onto_edge)
+                                             .road_classification.GetNumberOfLanes());
+                    return lanes;
+                }();
+
+                const auto next_coordinate =
+                    coordinate_extractor.GetCoordinateAlongRoad(node,
+                                                                edge,
+                                                                false,
+                                                                node_based_graph.GetTarget(edge),
+                                                                number_of_lanes_at_intersection);
 
                 result.push_back(
                     util::coordinate_calculation::bearing(src_coordinate, next_coordinate));

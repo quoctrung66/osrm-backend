@@ -2,7 +2,6 @@
 #define OSRM_EXTRACTOR_GUIDANCE_TURN_LANE_MATCHER_HPP_
 
 #include "extractor/guidance/intersection.hpp"
-#include "extractor/guidance/toolkit.hpp"
 #include "extractor/guidance/turn_instruction.hpp"
 #include "extractor/guidance/turn_lane_data.hpp"
 
