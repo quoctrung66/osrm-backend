@@ -12,6 +12,8 @@
 #include "extractor/guidance/coordinate_extractor.hpp"
 #include "extractor/guidance/intersection.hpp"
 
+#include <boost/optional.hpp>
+
 namespace osrm
 {
 namespace extractor

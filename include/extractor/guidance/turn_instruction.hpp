@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <cstdint>
 
-#include <boost/assert.hpp>
-
 #include "extractor/guidance/roundabout_type.hpp"
 #include "util/attributes.hpp"
 #include "util/typedefs.hpp"

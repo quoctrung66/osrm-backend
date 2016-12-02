@@ -9,8 +9,6 @@
 #include "util/guidance/turn_lanes.hpp"
 #include "util/node_based_graph.hpp"
 
-#include <unordered_map>
-
 namespace osrm
 {
 namespace extractor

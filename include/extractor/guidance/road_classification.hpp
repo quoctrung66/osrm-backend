@@ -4,10 +4,8 @@
 #include <cmath>
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 
 #include "extractor/guidance/constants.hpp"
-#include <osmium/osm.hpp>
 
 namespace osrm
 {

@@ -6,6 +6,8 @@
 #include "util/guidance/bearing_class.hpp"
 #include "util/guidance/entry_class.hpp"
 
+#include <utility>
+
 namespace osrm
 {
 namespace extractor

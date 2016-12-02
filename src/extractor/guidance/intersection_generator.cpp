@@ -2,6 +2,7 @@
 #include "extractor/guidance/constants.hpp"
 
 #include "util/bearing.hpp"
+#include "util/coordinate_calculation.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -155,11 +156,8 @@ IntersectionView IntersectionGenerator::GetConnectedRoads(const NodeID from_node
     return TransformIntersectionShapeIntoView(from_node, via_eid, std::move(intersection));
 }
 
-IntersectionView
-IntersectionGenerator::GetActualNextIntersection(const NodeID starting_node,
-                                                 const EdgeID via_edge,
-                                                 NodeID *resulting_from_node = nullptr,
-                                                 EdgeID *resulting_via_edge = nullptr) const
+std::pair<NodeID, EdgeID> IntersectionGenerator::SkipDegreeTwoNodes(const NodeID starting_node,
+                                                                    const EdgeID via_edge) const
 {
     NodeID query_node = starting_node;
     EdgeID query_edge = via_edge;
@@ -190,12 +188,7 @@ IntersectionGenerator::GetActualNextIntersection(const NodeID starting_node,
         query_edge = next_edge;
     }
 
-    if (resulting_from_node)
-        *resulting_from_node = query_node;
-    if (resulting_via_edge)
-        *resulting_via_edge = query_edge;
-
-    return GetConnectedRoads(query_node, query_edge);
+    return std::make_pair(query_node, query_edge);
 }
 
 IntersectionView IntersectionGenerator::TransformIntersectionShapeIntoView(

@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "util/bearing.hpp"
+#include "util/coordinate_calculation.hpp"
 #include <boost/range/algorithm/transform.hpp>
 
 using osrm::util::angularDeviation;
