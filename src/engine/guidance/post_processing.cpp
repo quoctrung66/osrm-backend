@@ -4,11 +4,10 @@
 
 #include "engine/guidance/assemble_steps.hpp"
 #include "engine/guidance/lane_processing.hpp"
-#include "engine/guidance/toolkit.hpp"
 
 #include "util/bearing.hpp"
-#include "util/guidance/turn_lanes.hpp"
 #include "util/guidance/name_announcements.hpp"
+#include "util/guidance/turn_lanes.hpp"
 
 #include <boost/assert.hpp>
 #include <boost/numeric/conversion/cast.hpp>
@@ -28,6 +27,7 @@ using osrm::util::angularDeviation;
 using osrm::extractor::guidance::getTurnDirection;
 using osrm::extractor::guidance::hasRampType;
 using osrm::extractor::guidance::mirrorDirectionModifier;
+using osrm::extractor::guidance::bearingToDirectionModifier;
 
 namespace osrm
 {
@@ -1490,7 +1490,7 @@ std::vector<RouteStep> assignRelativeLocations(std::vector<RouteStep> steps,
     const auto initial_modifier =
         distance_to_start >= MINIMAL_RELATIVE_DISTANCE &&
                 distance_to_start <= MAXIMAL_RELATIVE_DISTANCE
-            ? angleToDirectionModifier(util::coordinate_calculation::computeAngle(
+            ? bearingToDirectionModifier(util::coordinate_calculation::computeAngle(
                   source_node.input_location, leg_geometry.locations[0], leg_geometry.locations[1]))
             : extractor::guidance::DirectionModifier::UTurn;
 
@@ -1501,7 +1501,7 @@ std::vector<RouteStep> assignRelativeLocations(std::vector<RouteStep> steps,
     const auto final_modifier =
         distance_from_end >= MINIMAL_RELATIVE_DISTANCE &&
                 distance_from_end <= MAXIMAL_RELATIVE_DISTANCE
-            ? angleToDirectionModifier(util::coordinate_calculation::computeAngle(
+            ? bearingToDirectionModifier(util::coordinate_calculation::computeAngle(
                   leg_geometry.locations[leg_geometry.locations.size() - 2],
                   leg_geometry.locations[leg_geometry.locations.size() - 1],
                   target_node.input_location))
@@ -1600,13 +1600,13 @@ std::vector<RouteStep> collapseUseLane(std::vector<RouteStep> steps)
         // the lane description is given left to right, lanes are counted from the right.
         // Therefore we access the lane description using the reverse iterator
 
-        auto right_most_lanes = lanesToTheRight(step);
+        auto right_most_lanes = step.lanesToTheRight();
         if (!right_most_lanes.empty() && containsTag(right_most_lanes.front(),
                                                      (extractor::guidance::TurnLaneType::straight |
                                                       extractor::guidance::TurnLaneType::none)))
             return false;
 
-        auto left_most_lanes = lanesToTheLeft(step);
+        auto left_most_lanes = step.lanesToTheLeft();
         if (!left_most_lanes.empty() && containsTag(left_most_lanes.back(),
                                                     (extractor::guidance::TurnLaneType::straight |
                                                      extractor::guidance::TurnLaneType::none)))

@@ -293,6 +293,20 @@ inline bool isRightTurn(const extractor::guidance::TurnInstruction instruction)
     }
 }
 
+inline DirectionModifier::Enum bearingToDirectionModifier(const double bearing)
+{
+    if (bearing < 135)
+    {
+        return extractor::guidance::DirectionModifier::Right;
+    }
+
+    if (bearing <= 225)
+    {
+        return extractor::guidance::DirectionModifier::Straight;
+    }
+    return extractor::guidance::DirectionModifier::Left;
+}
+
 } // namespace guidance
 } // namespace extractor
 } // namespace osrm
