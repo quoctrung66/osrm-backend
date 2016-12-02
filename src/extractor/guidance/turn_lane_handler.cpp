@@ -4,13 +4,11 @@
 #include "extractor/guidance/turn_lane_augmentation.hpp"
 #include "extractor/guidance/turn_lane_matcher.hpp"
 #include "util/bearing.hpp"
-#include "util/simple_logger.hpp"
 #include "util/typedefs.hpp"
 
 #include <cstddef>
 #include <cstdint>
 
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
 using osrm::util::angularDeviation;

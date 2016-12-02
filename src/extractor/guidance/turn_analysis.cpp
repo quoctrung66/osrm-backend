@@ -4,16 +4,11 @@
 
 #include "util/coordinate.hpp"
 #include "util/coordinate_calculation.hpp"
-#include "util/simple_logger.hpp"
 
 #include <cstddef>
-#include <iomanip>
-#include <iterator>
-#include <limits>
-#include <map>
 #include <set>
-#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 using osrm::extractor::guidance::getTurnDirection;
 

@@ -5,7 +5,6 @@
 #include "util/guidance/name_announcements.hpp"
 
 #include <limits>
-#include <utility>
 
 #include <boost/assert.hpp>
 

@@ -4,6 +4,7 @@
 #include "util/guidance/name_announcements.hpp"
 
 #include <tuple>
+#include <utility>
 
 using osrm::util::angularDeviation;
 

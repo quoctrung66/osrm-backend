@@ -1,15 +1,11 @@
 #include "extractor/guidance/intersection_generator.hpp"
-#include "extractor/guidance/constants.hpp"
 
 #include "util/bearing.hpp"
 #include "util/coordinate_calculation.hpp"
 
 #include <algorithm>
-#include <functional>
-#include <iomanip>
-#include <iterator>
+#include <functional> // mem_fn
 #include <limits>
-#include <unordered_set>
 #include <utility>
 
 #include <boost/range/algorithm/count_if.hpp>

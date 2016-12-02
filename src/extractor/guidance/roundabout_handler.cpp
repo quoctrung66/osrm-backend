@@ -4,9 +4,9 @@
 #include "util/bearing.hpp"
 #include "util/coordinate_calculation.hpp"
 #include "util/guidance/name_announcements.hpp"
-#include "util/simple_logger.hpp"
 
 #include <algorithm>
+#include <utility>
 #include <cmath>
 
 #include <boost/assert.hpp>

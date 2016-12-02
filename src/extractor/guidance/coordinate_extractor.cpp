@@ -4,15 +4,12 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
-#include <iomanip>
-#include <limits>
 #include <numeric>
 #include <tuple>
 #include <utility>
 
 #include "util/bearing.hpp"
 #include "util/coordinate_calculation.hpp"
-#include <boost/range/algorithm/transform.hpp>
 
 using osrm::util::angularDeviation;
 
