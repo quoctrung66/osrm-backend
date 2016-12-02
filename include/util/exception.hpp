@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <exception>
 #include <string>
 #include <utility>
-#include "simple_logger.hpp"
 
 namespace osrm
 {
@@ -41,14 +40,8 @@ namespace util
 class exception final : public std::exception
 {
   public:
-    explicit exception(const char *message_) : message(message_)
-    {
-        util::SimpleLogger().Write(logERROR) << message;
-    }
-    explicit exception(std::string message_) : message(std::move(message_))
-    {
-        util::SimpleLogger().Write(logERROR) << message;
-    }
+    explicit exception(const char *message_) : message(message_) {}
+    explicit exception(std::string message_) : message(std::move(message_)) {}
     const char *what() const noexcept override { return message.c_str(); }
 
   private:
