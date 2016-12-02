@@ -40,8 +40,14 @@ namespace util
 class exception final : public std::exception
 {
   public:
-    explicit exception(const char *message_) : message(message_) {}
-    explicit exception(std::string message_) : message(std::move(message_)) {}
+    explicit exception(const char *message_, const char *sourcefile, const int line)
+        : message(std::string(sourcefile) + ":" + std::to_string(line) + " " + message_)
+    {
+    }
+    explicit exception(std::string message_, const char *sourcefile, const int line)
+        : message(std::string(sourcefile) + ":" + std::to_string(line) + " " + std::move(message_))
+    {
+    }
     const char *what() const noexcept override { return message.c_str(); }
 
   private:

@@ -65,7 +65,8 @@ int luaErrorCallback(lua_State *state)
     std::string error_msg = lua_tostring(state, -1);
     std::ostringstream error_stream;
     error_stream << error_msg;
-    throw util::exception("ERROR occurred in profile script:\n" + error_stream.str());
+    throw util::exception(
+        "ERROR occurred in profile script:\n" + error_stream.str(), __FILE__, __LINE__);
 }
 }
 
@@ -266,7 +267,8 @@ void LuaScriptingEnvironment::InitContext(LuaScriptingContext &context)
         luabind::object error_msg(luabind::from_stack(context.state, -1));
         std::ostringstream error_stream;
         error_stream << error_msg;
-        throw util::exception("ERROR occurred in profile script:\n" + error_stream.str());
+        throw util::exception(
+            "ERROR occurred in profile script:\n" + error_stream.str(), __FILE__, __LINE__);
     }
 
     context.has_turn_penalty_function = util::luaFunctionExists(context.state, "turn_function");

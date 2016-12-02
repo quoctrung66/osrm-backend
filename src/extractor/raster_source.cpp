@@ -105,7 +105,7 @@ int SourceContainer::LoadRasterSource(const std::string &path_string,
     boost::filesystem::path filepath(path_string);
     if (!boost::filesystem::exists(filepath))
     {
-        throw util::exception("error reading: no such path");
+        throw util::exception(path_string + " does not exist", __FILE__, __LINE__);
     }
 
     RasterGrid rasterData{filepath, ncols, nrows};
@@ -126,7 +126,10 @@ RasterDatum SourceContainer::GetRasterDataFromSource(unsigned int source_id, dou
 {
     if (LoadedSources.size() < source_id + 1)
     {
-        throw util::exception("error reading: no such loaded source");
+        throw util::exception("Attempted to access source " + std::to_string(source_id) +
+                                  ", but there are only " + std::to_string(LoadedSources.size()) + " loaded",
+                              __FILE__,
+                              __LINE__);
     }
 
     BOOST_ASSERT(lat < 90);
@@ -145,7 +148,11 @@ SourceContainer::GetRasterInterpolateFromSource(unsigned int source_id, double l
 {
     if (LoadedSources.size() < source_id + 1)
     {
-        throw util::exception("error reading: no such loaded source");
+        throw util::exception("Attempted to access source " + std::to_string(source_id) +
+                                  ", but there are only " + std::to_string(LoadedSources.size()) +
+                                  " loaded",
+                              __FILE__,
+                              __LINE__);
     }
 
     BOOST_ASSERT(lat < 90);

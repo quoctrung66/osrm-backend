@@ -176,12 +176,16 @@ struct DataLayout
             if (!start_canary_alive)
             {
                 throw util::exception(std::string("Start canary of block corrupted. (") +
-                                      block_id_to_name[bid] + ")");
+                                          block_id_to_name[bid] + ")",
+                                      __FILE__,
+                                      __LINE__);
             }
             if (!end_canary_alive)
             {
                 throw util::exception(std::string("End canary of block corrupted. (") +
-                                      block_id_to_name[bid] + ")");
+                                          block_id_to_name[bid] + ")",
+                                      __FILE__,
+                                      __LINE__);
             }
         }
 

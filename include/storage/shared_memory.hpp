@@ -242,7 +242,7 @@ makeSharedMemory(const IdentifierT &id, const uint64_t size = 0, bool read_write
         {
             if (0 == size)
             {
-                throw util::exception("lock file does not exist, exiting");
+                throw util::exception("lock file does not exist, exiting", __FILE__, __LINE__);
             }
             else
             {
@@ -253,9 +253,10 @@ makeSharedMemory(const IdentifierT &id, const uint64_t size = 0, bool read_write
     }
     catch (const boost::interprocess::interprocess_exception &e)
     {
-        util::SimpleLogger().Write(logWARNING) << "caught exception: " << e.what() << ", code "
-                                               << e.get_error_code();
-        throw util::exception(e.what());
+        util::SimpleLogger().Write(logERROR)
+            << "Error while attempting to allocate shared memory: " << e.what() << ", code "
+            << e.get_error_code();
+        throw util::exception(e.what(), __FILE__, __LINE__);
     }
 }
 }

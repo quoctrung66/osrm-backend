@@ -175,11 +175,17 @@ Storage::ReturnCode Storage::Run(int max_wait)
     // since we can't change the size of a shared memory regions we delete and reallocate
     if (SharedMemory::RegionExists(layout_region) && !SharedMemory::Remove(layout_region))
     {
-        throw util::exception("Could not remove " + regionToString(layout_region));
+        throw util::exception("Could not remove shared memory region " +
+                                  regionToString(layout_region),
+                              __FILE__,
+                              __LINE__);
     }
     if (SharedMemory::RegionExists(data_region) && !SharedMemory::Remove(data_region))
     {
-        throw util::exception("Could not remove " + regionToString(data_region));
+        throw util::exception("Could not remove shared memory region " +
+                                  regionToString(data_region),
+                              __FILE__,
+                              __LINE__);
     }
 
     // Allocate a memory layout in shared memory

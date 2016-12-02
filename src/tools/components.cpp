@@ -138,13 +138,13 @@ int main(int argc, char *argv[])
     auto *po_driver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(psz_driver_name);
     if (nullptr == po_driver)
     {
-        throw osrm::util::exception("ESRI Shapefile driver not available");
+        throw osrm::util::exception("ESRI Shapefile driver not available", __FILE__, __LINE__);
     }
     auto *po_datasource = po_driver->CreateDataSource("component.shp", nullptr);
 
     if (nullptr == po_datasource)
     {
-        throw osrm::util::exception("Creation of output file failed");
+        throw osrm::util::exception("Creation of output file failed", __FILE__, __LINE__);
     }
 
     auto *po_srs = new OGRSpatialReference();
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 
     if (nullptr == po_layer)
     {
-        throw osrm::util::exception("Layer creation failed.");
+        throw osrm::util::exception("Layer creation failed.", __FILE__, __LINE__);
     }
     TIMER_STOP(SCC_RUN_SETUP);
     osrm::util::SimpleLogger().Write() << "shapefile setup took "
@@ -200,7 +200,8 @@ int main(int argc, char *argv[])
                     po_feature->SetGeometry(&line_string);
                     if (OGRERR_NONE != po_layer->CreateFeature(po_feature))
                     {
-                        throw osrm::util::exception("Failed to create feature in shapefile.");
+                        throw osrm::util::exception(
+                            "Failed to create feature in shapefile.", __FILE__, __LINE__);
                     }
                     OGRFeature::DestroyFeature(po_feature);
                 }

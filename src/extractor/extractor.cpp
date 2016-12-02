@@ -224,8 +224,8 @@ int Extractor::run(ScriptingEnvironment &scripting_environment)
 
         if (extraction_containers.all_edges_list.empty())
         {
-            util::SimpleLogger().Write(logWARNING) << "The input data is empty, exiting.";
-            return 1;
+            throw util::exception(
+                "There are no edges remaining after parsing.", __FILE__, __LINE__);
         }
 
         extraction_containers.PrepareData(scripting_environment,
@@ -311,7 +311,8 @@ void Extractor::WriteProfileProperties(const std::string &output_path,
     boost::filesystem::ofstream out_stream(output_path);
     if (!out_stream)
     {
-        throw util::exception("Could not open " + output_path + " for writing.");
+        throw util::exception(
+            "Could not open " + output_path + " for writing.", __FILE__, __LINE__);
     }
 
     out_stream.write(reinterpret_cast<const char *>(&properties), sizeof(properties));
@@ -437,8 +438,10 @@ Extractor::LoadNodeBasedGraph(std::unordered_set<NodeID> &barriers,
 
     if (edge_list.empty())
     {
-        util::SimpleLogger().Write(logWARNING) << "The input data is empty, exiting.";
-        return std::shared_ptr<util::NodeBasedDynamicGraph>();
+        throw util::exception("Node-based-graph (" + config.output_file_name +
+                                  ") contains no edges.",
+                              __FILE__,
+                              __LINE__);
     }
 
     return util::NodeBasedDynamicGraphFromEdges(number_of_node_based_nodes, edge_list);
@@ -565,7 +568,9 @@ void Extractor::BuildRTree(std::vector<EdgeBasedNode> node_based_edge_list,
     if (new_size == 0)
     {
         throw util::exception("There are no snappable edges left after processing.  Are you "
-                              "setting travel modes correctly in the profile?  Cannot continue.");
+                              "setting travel modes correctly in the profile?  Cannot continue.",
+                              __FILE__,
+                              __LINE__);
     }
     node_based_edge_list.resize(new_size);
 
@@ -619,8 +624,8 @@ void Extractor::WriteIntersectionClassificationData(
     std::ofstream file_out_stream(output_file_name.c_str(), std::ios::binary);
     if (!file_out_stream)
     {
-        util::SimpleLogger().Write(logWARNING) << "Failed to open " << output_file_name
-                                               << " for writing";
+        util::SimpleLogger().Write(logERROR) << "Failed to open " << output_file_name
+                                             << " for writing";
         return;
     }
 
@@ -653,7 +658,7 @@ void Extractor::WriteIntersectionClassificationData(
 
     if (!static_cast<bool>(file_out_stream))
     {
-        throw util::exception("Failed to write to " + output_file_name + ".");
+        throw util::exception("Failed to write to " + output_file_name + ".", __FILE__, __LINE__);
     }
 
     util::serializeVector(file_out_stream, entry_classes);
@@ -677,18 +682,17 @@ void Extractor::WriteTurnLaneData(const std::string &turn_lane_file) const
 
     std::ofstream ofs(turn_lane_file, std::ios::binary);
     if (!ofs)
-        throw osrm::util::exception("Failed to open " + turn_lane_file + " for writing.");
+        throw osrm::util::exception(
+            "Failed to open " + turn_lane_file + " for writing.", __FILE__, __LINE__);
 
     if (!util::serializeVector(ofs, turn_lane_offsets))
     {
-        util::SimpleLogger().Write(logWARNING) << "Error while writing.";
-        return;
+        throw util::exception("Error while writing to " + turn_lane_file, __FILE__, __LINE__);
     }
 
     if (!util::serializeVector(ofs, turn_lane_masks))
     {
-        util::SimpleLogger().Write(logWARNING) << "Error while writing.";
-        return;
+        throw util::exception("Error while writing to " + turn_lane_file, __FILE__, __LINE__);
     }
 
     TIMER_STOP(turn_lane_timer);

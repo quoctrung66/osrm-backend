@@ -66,7 +66,7 @@ bool generateDataStoreOptions(const int argc,
     }
     catch (const boost::program_options::error &e)
     {
-        util::SimpleLogger().Write(logWARNING) << "[error] " << e.what();
+        util::SimpleLogger().Write(logERROR) << e.what();
         return false;
     }
 
@@ -100,7 +100,7 @@ int main(const int argc, const char *argv[]) try
     storage::StorageConfig config(base_path);
     if (!config.IsValid())
     {
-        util::SimpleLogger().Write(logWARNING) << "Config contains invalid file paths. Exiting!";
+        util::SimpleLogger().Write(logERROR) << "Config contains invalid file paths. Exiting!";
         return EXIT_FAILURE;
     }
     storage::Storage storage(std::move(config));
@@ -131,9 +131,14 @@ int main(const int argc, const char *argv[]) try
 }
 catch (const std::bad_alloc &e)
 {
-    util::SimpleLogger().Write(logWARNING) << "[exception] " << e.what();
-    util::SimpleLogger().Write(logWARNING)
+    util::SimpleLogger().Write(logERROR) << "[exception] " << e.what();
+    util::SimpleLogger().Write(logERROR)
         << "Please provide more memory or disable locking the virtual "
            "address space (note: this makes OSRM swap, i.e. slow)";
+    return EXIT_FAILURE;
+}
+catch (const util::exception &e)
+{
+    util::SimpleLogger().Write(logERROR) << e.what();
     return EXIT_FAILURE;
 }

@@ -121,7 +121,9 @@ void deserializeAdjacencyArray(const std::string &filename,
     if (offsets.empty() || (offsets.back() != boost::numeric_cast<std::uint32_t>(data.size())))
         throw util::exception("Error in " + filename + (offsets.empty()
                                                             ? "Offsets are empty"
-                                                            : "Offset and data size do not match"));
+                                                            : "Offset and data size do not match"),
+                              __FILE__,
+                              __LINE__);
 }
 
 inline bool serializeFlags(const boost::filesystem::path &path, const std::vector<bool> &flags)

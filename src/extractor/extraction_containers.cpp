@@ -273,7 +273,9 @@ void ExtractionContainers::PrepareNodes()
     if (internal_id > std::numeric_limits<NodeID>::max())
     {
         throw util::exception("There are too many nodes remaining after filtering, OSRM only "
-                              "supports 2^32 unique nodes");
+                              "supports 2^32 unique nodes",
+                              __FILE__,
+                              __LINE__);
     }
     max_internal_node_id = boost::numeric_cast<NodeID>(internal_id);
     TIMER_STOP(id_map);
@@ -411,7 +413,7 @@ void ExtractionContainers::PrepareEdges(ScriptingEnvironment &scripting_environm
                 return (distance * 10.) / (data.speed / 3.6);
                 break;
             case InternalExtractorEdge::WeightType::INVALID:
-                util::exception("invalid weight type");
+                util::exception("invalid weight type", __FILE__, __LINE__);
             }
             return -1.0;
         }(edge_iterator->weight_data);
@@ -578,7 +580,8 @@ void ExtractionContainers::WriteEdges(std::ofstream &file_out_stream) const
 
     if (used_edges_counter > std::numeric_limits<unsigned>::max())
     {
-        throw util::exception("There are too many edges, OSRM only supports 2^32");
+        throw util::exception(
+            "There are too many edges, OSRM only supports 2^32", __FILE__, __LINE__);
     }
     TIMER_STOP(write_edges);
     std::cout << "ok, after " << TIMER_SEC(write_edges) << "s" << std::endl;
