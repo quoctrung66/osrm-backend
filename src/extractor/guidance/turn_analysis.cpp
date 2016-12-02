@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-using osrm::util::guidance::getTurnDirection;
+using osrm::extractor::guidance::getTurnDirection;
 
 namespace osrm
 {

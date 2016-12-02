@@ -26,7 +26,9 @@ using TurnInstruction = osrm::extractor::guidance::TurnInstruction;
 namespace TurnType = osrm::extractor::guidance::TurnType;
 namespace DirectionModifier = osrm::extractor::guidance::DirectionModifier;
 using osrm::util::guidance::angularDeviation;
-using osrm::util::guidance::getTurnDirection;
+using osrm::extractor::guidance::getTurnDirection;
+using osrm::extractor::guidance::hasRampType;
+using osrm::extractor::guidance::mirrorDirectionModifier;
 
 namespace osrm
 {
@@ -306,7 +308,7 @@ void closeOffRoundabout(const bool on_roundabout,
 
                     auto bearings = propagation_step.intersections.front().bearings;
                     propagation_step.maneuver.instruction.direction_modifier =
-                        util::guidance::getTurnDirection(angle);
+                        getTurnDirection(angle);
                 }
 
                 forwardStepSignage(propagation_step, destination_copy);
@@ -521,8 +523,8 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
             // tagged late
             const auto is_delayed_turn_onto_a_ramp =
                 opening_turn.distance <= 4 * MAX_COLLAPSE_DISTANCE && without_choice &&
-                util::guidance::hasRampType(finishing_turn.maneuver.instruction);
-            return !util::guidance::hasRampType(opening_turn.maneuver.instruction) &&
+                hasRampType(finishing_turn.maneuver.instruction);
+            return !hasRampType(opening_turn.maneuver.instruction) &&
                    (is_short_and_collapsable || is_not_too_long_and_choiceless ||
                     isLinkroad(opening_turn) || is_delayed_turn_onto_a_ramp);
         }
@@ -539,8 +541,7 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
         if (TurnType::Merge == current_step.maneuver.instruction.type)
         {
             steps[step_index].maneuver.instruction.direction_modifier =
-                util::guidance::mirrorDirectionModifier(
-                    steps[step_index].maneuver.instruction.direction_modifier);
+                mirrorDirectionModifier(steps[step_index].maneuver.instruction.direction_modifier);
             steps[step_index].maneuver.instruction.type = TurnType::Turn;
         }
         else
@@ -669,7 +670,7 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
                         DirectionModifier::Straight;
                 else
                     steps[step_index].maneuver.instruction.direction_modifier =
-                        util::guidance::getTurnDirection(bearing_turn_angle);
+                        getTurnDirection(bearing_turn_angle);
 
                 // if the total direction of this turn is now straight, we can keep it suppressed/as
                 // a new name. Else we have to interpret it as a turn.
@@ -737,9 +738,8 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
                                       // need a highway-suppressed to get the turn onto a
                                       // highway...
         {
-            steps[one_back_index].maneuver.instruction.direction_modifier =
-                util::guidance::mirrorDirectionModifier(
-                    steps[one_back_index].maneuver.instruction.direction_modifier);
+            steps[one_back_index].maneuver.instruction.direction_modifier = mirrorDirectionModifier(
+                steps[one_back_index].maneuver.instruction.direction_modifier);
         }
         // on non merge-types, we check for a combined turn angle
         else if (TurnType::Merge != one_back_step.maneuver.instruction.type)
@@ -759,8 +759,7 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
     {
         steps[one_back_index] = elongate(std::move(steps[one_back_index]), current_step);
         const auto angle = findTotalTurnAngle(one_back_step, current_step);
-        steps[one_back_index].maneuver.instruction.direction_modifier =
-            util::guidance::getTurnDirection(angle);
+        steps[one_back_index].maneuver.instruction.direction_modifier = getTurnDirection(angle);
 
         invalidateStep(steps[step_index]);
     }
@@ -772,8 +771,7 @@ void collapseTurnAt(std::vector<RouteStep> &steps,
         steps[one_back_index] = elongate(std::move(steps[one_back_index]), current_step);
         steps[one_back_index].maneuver.instruction.type = TurnType::OnRamp;
         const auto angle = findTotalTurnAngle(one_back_step, current_step);
-        steps[one_back_index].maneuver.instruction.direction_modifier =
-            util::guidance::getTurnDirection(angle);
+        steps[one_back_index].maneuver.instruction.direction_modifier = getTurnDirection(angle);
 
         forwardStepSignage(steps[one_back_index], current_step);
         invalidateStep(steps[step_index]);
@@ -1123,7 +1121,7 @@ std::vector<RouteStep> collapseTurns(std::vector<RouteStep> steps)
 
                     const auto angle = findTotalTurnAngle(one_back_step, current_step);
                     steps[one_back_index].maneuver.instruction.direction_modifier =
-                        util::guidance::getTurnDirection(angle);
+                        getTurnDirection(angle);
                     invalidateStep(steps[step_index]);
                 }
                 else

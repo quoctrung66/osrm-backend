@@ -14,8 +14,8 @@ using TurnInstruction = osrm::extractor::guidance::TurnInstruction;
 namespace TurnType = osrm::extractor::guidance::TurnType;
 namespace DirectionModifier = osrm::extractor::guidance::DirectionModifier;
 
-using osrm::util::guidance::isLeftTurn;
-using osrm::util::guidance::isRightTurn;
+using osrm::extractor::guidance::isLeftTurn;
+using osrm::extractor::guidance::isRightTurn;
 
 namespace osrm
 {

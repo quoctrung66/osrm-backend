@@ -54,8 +54,8 @@ DirectionModifier::Enum getMatchingModifier(const TurnLaneType::Mask tag)
 // check whether a match of a given tag and a turn instruction can be seen as valid
 bool isValidMatch(const TurnLaneType::Mask tag, const TurnInstruction instruction)
 {
-    using util::guidance::hasLeftModifier;
-    using util::guidance::hasRightModifier;
+    using extractor::guidance::hasLeftModifier;
+    using extractor::guidance::hasRightModifier;
     const auto isMirroredModifier = [](const TurnInstruction instruction) {
         return instruction.type == TurnType::Merge;
     };
