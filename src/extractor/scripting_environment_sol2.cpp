@@ -36,19 +36,6 @@ namespace osrm
 namespace extractor
 {
 
-template <class T, class D>
-const char* get_value_by_key(T const &object, const char *key, D const default_value)
-{
-    auto v = get_value_by_key(object, key);
-    if (v && *v)
-    { // non-empty string?
-        return v;
-    }
-    else
-    {
-        return default_value;
-    }
-}
 template <class T>
 auto get_value_by_key(T const &object, const char *key) -> decltype(object.get_value_by_key(key))
 {
@@ -59,7 +46,21 @@ auto get_value_by_key(T const &object, const char *key) -> decltype(object.get_v
     }
     else
     {
-        return "";
+        return nullptr;
+    }
+}
+
+template <class T, class D>
+const char* get_value_by_key(T const &object, const char *key, D const default_value)
+{
+    auto v = get_value_by_key(object, key);
+    if (v && *v)
+    {
+        return v;
+    }
+    else
+    {
+        return default_value;
     }
 }
 
@@ -244,6 +245,8 @@ void Sol2ScriptingEnvironment::InitContext(Sol2ScriptingContext &context)
         &ExtractionWay::is_access_restricted,
         "is_startpoint",
         &ExtractionWay::is_startpoint,
+        "ignore_in_grid",
+        &ExtractionWay::ignore_in_grid,
         "duration",
         &ExtractionWay::duration,
         "road_classification",
