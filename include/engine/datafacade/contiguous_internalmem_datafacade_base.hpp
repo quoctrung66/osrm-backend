@@ -147,7 +147,7 @@ class ContiguousInternalMemoryDataFacadeBase : public BaseDataFacade
             util::SimpleLogger().Write(logDEBUG) << "Leaf file name " << file_index_path.string();
             throw util::exception("Could not load " + file_index_path.string() +
                                       "Is any data loaded into shared memory?",
-                                  __FILE__,
+                                  OSRM_SOURCE_FILE,
                                   __LINE__);
         }
 

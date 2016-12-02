@@ -177,14 +177,14 @@ struct DataLayout
             {
                 throw util::exception(std::string("Start canary of block corrupted. (") +
                                           block_id_to_name[bid] + ")",
-                                      __FILE__,
+                                      OSRM_SOURCE_FILE,
                                       __LINE__);
             }
             if (!end_canary_alive)
             {
                 throw util::exception(std::string("End canary of block corrupted. (") +
                                           block_id_to_name[bid] + ")",
-                                      __FILE__,
+                                      OSRM_SOURCE_FILE,
                                       __LINE__);
             }
         }

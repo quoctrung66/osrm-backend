@@ -2,6 +2,7 @@
 
 #include "util/simple_logger.hpp"
 #include "util/timing_util.hpp"
+#include "util/typedefs.hpp"
 
 #include <cmath>
 
@@ -105,7 +106,8 @@ int SourceContainer::LoadRasterSource(const std::string &path_string,
     boost::filesystem::path filepath(path_string);
     if (!boost::filesystem::exists(filepath))
     {
-        throw util::exception(path_string + " does not exist", __FILE__, __LINE__);
+        throw util::exception(
+            path_string + " does not exist", OSRM_SOURCE_FILE, __LINE__);
     }
 
     RasterGrid rasterData{filepath, ncols, nrows};
@@ -127,8 +129,9 @@ RasterDatum SourceContainer::GetRasterDataFromSource(unsigned int source_id, dou
     if (LoadedSources.size() < source_id + 1)
     {
         throw util::exception("Attempted to access source " + std::to_string(source_id) +
-                                  ", but there are only " + std::to_string(LoadedSources.size()) + " loaded",
-                              __FILE__,
+                                  ", but there are only " + std::to_string(LoadedSources.size()) +
+                                  " loaded",
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
 
@@ -151,7 +154,7 @@ SourceContainer::GetRasterInterpolateFromSource(unsigned int source_id, double l
         throw util::exception("Attempted to access source " + std::to_string(source_id) +
                                   ", but there are only " + std::to_string(LoadedSources.size()) +
                                   " loaded",
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
 

@@ -379,7 +379,7 @@ class StaticRTree
         {
             throw exception(boost::str(boost::format("Leaf file %1% mapping failed: %2%") %
                                        leaf_file % exc.what()),
-                            __FILE__,
+                            OSRM_SOURCE_FILE,
                             __LINE__);
         }
     }

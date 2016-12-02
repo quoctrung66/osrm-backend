@@ -177,14 +177,14 @@ Storage::ReturnCode Storage::Run(int max_wait)
     {
         throw util::exception("Could not remove shared memory region " +
                                   regionToString(layout_region),
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
     if (SharedMemory::RegionExists(data_region) && !SharedMemory::Remove(data_region))
     {
         throw util::exception("Could not remove shared memory region " +
                                   regionToString(data_region),
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
 

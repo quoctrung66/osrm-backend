@@ -225,7 +225,7 @@ int Extractor::run(ScriptingEnvironment &scripting_environment)
         if (extraction_containers.all_edges_list.empty())
         {
             throw util::exception(
-                "There are no edges remaining after parsing.", __FILE__, __LINE__);
+                "There are no edges remaining after parsing.", OSRM_SOURCE_FILE, __LINE__);
         }
 
         extraction_containers.PrepareData(scripting_environment,
@@ -312,7 +312,7 @@ void Extractor::WriteProfileProperties(const std::string &output_path,
     if (!out_stream)
     {
         throw util::exception(
-            "Could not open " + output_path + " for writing.", __FILE__, __LINE__);
+            "Could not open " + output_path + " for writing.", OSRM_SOURCE_FILE, __LINE__);
     }
 
     out_stream.write(reinterpret_cast<const char *>(&properties), sizeof(properties));
@@ -440,7 +440,7 @@ Extractor::LoadNodeBasedGraph(std::unordered_set<NodeID> &barriers,
     {
         throw util::exception("Node-based-graph (" + config.output_file_name +
                                   ") contains no edges.",
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
 
@@ -569,7 +569,7 @@ void Extractor::BuildRTree(std::vector<EdgeBasedNode> node_based_edge_list,
     {
         throw util::exception("There are no snappable edges left after processing.  Are you "
                               "setting travel modes correctly in the profile?  Cannot continue.",
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
     }
     node_based_edge_list.resize(new_size);
@@ -658,7 +658,7 @@ void Extractor::WriteIntersectionClassificationData(
 
     if (!static_cast<bool>(file_out_stream))
     {
-        throw util::exception("Failed to write to " + output_file_name + ".", __FILE__, __LINE__);
+        throw util::exception("Failed to write to " + output_file_name + ".", OSRM_SOURCE_FILE, __LINE__);
     }
 
     util::serializeVector(file_out_stream, entry_classes);
@@ -683,16 +683,16 @@ void Extractor::WriteTurnLaneData(const std::string &turn_lane_file) const
     std::ofstream ofs(turn_lane_file, std::ios::binary);
     if (!ofs)
         throw osrm::util::exception(
-            "Failed to open " + turn_lane_file + " for writing.", __FILE__, __LINE__);
+            "Failed to open " + turn_lane_file + " for writing.", OSRM_SOURCE_FILE, __LINE__);
 
     if (!util::serializeVector(ofs, turn_lane_offsets))
     {
-        throw util::exception("Error while writing to " + turn_lane_file, __FILE__, __LINE__);
+        throw util::exception("Error while writing to " + turn_lane_file, OSRM_SOURCE_FILE, __LINE__);
     }
 
     if (!util::serializeVector(ofs, turn_lane_masks))
     {
-        throw util::exception("Error while writing to " + turn_lane_file, __FILE__, __LINE__);
+        throw util::exception("Error while writing to " + turn_lane_file, OSRM_SOURCE_FILE, __LINE__);
     }
 
     TIMER_STOP(turn_lane_timer);

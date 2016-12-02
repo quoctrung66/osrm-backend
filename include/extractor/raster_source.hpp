@@ -68,14 +68,14 @@ class RasterGrid
         {
             throw util::exception("Failed to read from raster source " + filepath.string() + ": " +
                                       ex.what(),
-                                  __FILE__,
+                                  OSRM_SOURCE_FILE,
                                   __LINE__);
         }
 
         if (!r || itr != end)
         {
             throw util::exception(
-                "Failed to parse raster source: " + filepath.string(), __FILE__, __LINE__);
+                "Failed to parse raster source: " + filepath.string(), OSRM_SOURCE_FILE, __LINE__);
         }
     }
 

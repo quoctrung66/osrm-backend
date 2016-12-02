@@ -131,8 +131,9 @@ int Contractor::Run()
 
     if (config.core_factor > 1.0 || config.core_factor < 0)
     {
-        throw util::exception(
-            "Core factor must be between 0.0 to 1.0 (inclusive)", __FILE__, __LINE__);
+        throw util::exception("Core factor must be between 0.0 to 1.0 (inclusive)",
+                              OSRM_SOURCE_FILE,
+                              __LINE__);
     }
 
     TIMER_START(preparing);
@@ -336,7 +337,7 @@ parse_segment_lookup_from_csv_files(const std::vector<std::string> &segment_spee
                 {
                     const std::string message{"Segment speed file " + filename +
                                               " malformed on line " + std::to_string(line_number)};
-                    throw util::exception(message, __FILE__, __LINE__);
+                    throw util::exception(message, OSRM_SOURCE_FILE, __LINE__);
                 }
 
                 SegmentSpeedSource val{{OSMNodeID{from_node_id}, OSMNodeID{to_node_id}},
@@ -363,7 +364,7 @@ parse_segment_lookup_from_csv_files(const std::vector<std::string> &segment_spee
     }
     catch (const tbb::captured_exception &e)
     {
-        throw util::exception(e.what(), __FILE__, __LINE__);
+        throw util::exception(e.what(), OSRM_SOURCE_FILE, __LINE__);
     }
 
     // With flattened map-ish view of all the files, sort and unique them on from,to,source
@@ -441,7 +442,7 @@ parse_turn_penalty_lookup_from_csv_files(const std::vector<std::string> &turn_pe
                 {
                     const std::string message{"Turn penalty file " + filename +
                                               " malformed on line " + std::to_string(line_number)};
-                    throw util::exception(message, __FILE__, __LINE__);
+                    throw util::exception(message, OSRM_SOURCE_FILE, __LINE__);
                 }
 
                 TurnPenaltySource val{
@@ -462,7 +463,13 @@ parse_turn_penalty_lookup_from_csv_files(const std::vector<std::string> &turn_pe
         }
     };
 
-    tbb::parallel_for(std::size_t{0}, turn_penalty_filenames.size(), parse_turn_penalty_file);
+    try
+    {
+        tbb::parallel_for(std::size_t{0}, turn_penalty_filenames.size(), parse_turn_penalty_file);
+    }
+    catch (const tbb::captured_exception &e)
+    {
+    }
 
     // With flattened map-ish view of all the files, sort and unique them on from,to,source
     // The greater '>' is used here since we want to give files later on higher precedence
@@ -508,8 +515,9 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
     const double log_edge_updates_factor)
 {
     if (segment_speed_filenames.size() > 255 || turn_penalty_filenames.size() > 255)
-        throw util::exception(
-            "Limit of 255 segment speed and turn penalty files each reached", __FILE__, __LINE__);
+        throw util::exception("Limit of 255 segment speed and turn penalty files each reached",
+                              OSRM_SOURCE_FILE,
+                              __LINE__);
 
     util::SimpleLogger().Write() << "Opening " << edge_based_graph_filename;
 
@@ -780,7 +788,7 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         if (!geometry_stream)
         {
             const std::string message{"Failed to open " + geometry_filename + " for writing"};
-            throw util::exception(message, __FILE__, __LINE__);
+            throw util::exception(message, OSRM_SOURCE_FILE, __LINE__);
         }
         const unsigned number_of_indices = m_geometry_indices.size();
         const unsigned number_of_compressed_geometries = m_geometry_node_list.size();
@@ -803,7 +811,7 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         {
             const std::string message{"Failed to open " + datasource_indexes_filename +
                                       " for writing"};
-            throw util::exception(message, __FILE__, __LINE__);
+            throw util::exception(message, OSRM_SOURCE_FILE, __LINE__);
         }
         std::uint64_t number_of_datasource_entries = m_geometry_datasource.size();
         datasource_stream.write(reinterpret_cast<const char *>(&number_of_datasource_entries),
@@ -821,7 +829,7 @@ EdgeID Contractor::LoadEdgeExpandedGraph(
         {
             const std::string message{"Failed to open " + datasource_names_filename +
                                       " for writing"};
-            throw util::exception(message, __FILE__, __LINE__);
+            throw util::exception(message, OSRM_SOURCE_FILE, __LINE__);
         }
         datasource_stream << "lua profile" << std::endl;
         for (auto const &name : segment_speed_filenames)
@@ -1091,7 +1099,7 @@ Contractor::WriteContractedGraph(unsigned max_node_id,
             util::SimpleLogger().Write(logWARNING) << "Failed at adjacency list of node "
                                                    << contracted_edge_list[edge].source << "/"
                                                    << node_array.size() - 1;
-            throw util::exception("Edge weight is <= 0", __FILE__, __LINE__);
+            throw util::exception("Edge weight is <= 0", OSRM_SOURCE_FILE, __LINE__);
         }
 #endif
         hsgr_output_stream.write((char *)&current_edge,

@@ -66,7 +66,7 @@ int luaErrorCallback(lua_State *state)
     std::ostringstream error_stream;
     error_stream << error_msg;
     throw util::exception(
-        "ERROR occurred in profile script:\n" + error_stream.str(), __FILE__, __LINE__);
+        "ERROR occurred in profile script:\n" + error_stream.str(), OSRM_SOURCE_FILE, __LINE__);
 }
 }
 
@@ -268,7 +268,7 @@ void LuaScriptingEnvironment::InitContext(LuaScriptingContext &context)
         std::ostringstream error_stream;
         error_stream << error_msg;
         throw util::exception(
-            "ERROR occurred in profile script:\n" + error_stream.str(), __FILE__, __LINE__);
+            "ERROR occurred in profile script:\n" + error_stream.str(), OSRM_SOURCE_FILE, __LINE__);
     }
 
     context.has_turn_penalty_function = util::luaFunctionExists(context.state, "turn_function");

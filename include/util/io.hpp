@@ -122,7 +122,7 @@ void deserializeAdjacencyArray(const std::string &filename,
         throw util::exception("Error in " + filename + (offsets.empty()
                                                             ? "Offsets are empty"
                                                             : "Offset and data size do not match"),
-                              __FILE__,
+                              OSRM_SOURCE_FILE,
                               __LINE__);
 }
 

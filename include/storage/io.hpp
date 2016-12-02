@@ -53,11 +53,11 @@ class FileReader
         input_stream.open(filename_, std::ios::binary);
         if (!input_stream)
             throw util::exception(
-                "Error opening " + filename + ": " + std::strerror(errno), __FILE__, __LINE__);
+                "Error opening " + filename + ": " + std::strerror(errno), OSRM_SOURCE_FILE, __LINE__);
 
         if (flag == VerifyFingerprint && !ReadAndCheckFingerprint())
         {
-            throw util::exception("Fingerprint mismatch in " + filename, __FILE__, __LINE__);
+            throw util::exception("Fingerprint mismatch in " + filename, OSRM_SOURCE_FILE, __LINE__);
         }
     }
 
@@ -79,11 +79,11 @@ class FileReader
             if (result.eof())
             {
                 throw util::exception("Error reading from " + filename + ": Unexpected end of file",
-                                      __FILE__,
+                                      OSRM_SOURCE_FILE,
                                       __LINE__);
             }
             throw util::exception(
-                "Error reading from " + filename + ": " + std::strerror(errno), __FILE__, __LINE__);
+                "Error reading from " + filename + ": " + std::strerror(errno), OSRM_SOURCE_FILE, __LINE__);
         }
     }
 
