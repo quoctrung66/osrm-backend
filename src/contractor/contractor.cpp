@@ -7,7 +7,6 @@
 #include "extractor/node_based_edge.hpp"
 
 #include "storage/io.hpp"
-#include "storage/io.hpp"
 #include "util/exception.hpp"
 #include "util/graph_loader.hpp"
 #include "util/integer_range.hpp"
