@@ -28,16 +28,16 @@ struct IntersectionShapeData
 inline auto makeCompareShapeDataByBearing(const double base_bearing)
 {
     return [base_bearing](const auto &lhs, const auto &rhs) {
-        return util::bearing::angleBetweenBearings(base_bearing, lhs.bearing) <
-               util::bearing::angleBetweenBearings(base_bearing, rhs.bearing);
+        return util::angleBetweenBearings(base_bearing, lhs.bearing) <
+               util::angleBetweenBearings(base_bearing, rhs.bearing);
     };
 }
 
 inline auto makeCompareAngularDeviation(const double angle)
 {
     return [angle](const auto &lhs, const auto &rhs) {
-        return util::guidance::angularDeviation(lhs.angle, angle) <
-               util::guidance::angularDeviation(rhs.angle, angle);
+        return util::angularDeviation(lhs.angle, angle) <
+               util::angularDeviation(rhs.angle, angle);
     };
 }
 
