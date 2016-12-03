@@ -2,6 +2,7 @@
 #include "util/coordinate_calculation.hpp"
 #include "util/dynamic_graph.hpp"
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/fingerprint.hpp"
 #include "util/graph_loader.hpp"
 #include "util/simple_logger.hpp"
@@ -138,13 +139,13 @@ int main(int argc, char *argv[])
     auto *po_driver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(psz_driver_name);
     if (nullptr == po_driver)
     {
-        throw osrm::util::exception("ESRI Shapefile driver not available", OSRM_SOURCE_FILE, __LINE__);
+        throw osrm::util::exception("ESRI Shapefile driver not available" + SOURCE_REF);
     }
     auto *po_datasource = po_driver->CreateDataSource("component.shp", nullptr);
 
     if (nullptr == po_datasource)
     {
-        throw osrm::util::exception("Creation of output file failed", OSRM_SOURCE_FILE, __LINE__);
+        throw osrm::util::exception("Creation of output file failed" + SOURCE_REF);
     }
 
     auto *po_srs = new OGRSpatialReference();
@@ -154,7 +155,7 @@ int main(int argc, char *argv[])
 
     if (nullptr == po_layer)
     {
-        throw osrm::util::exception("Layer creation failed.", OSRM_SOURCE_FILE, __LINE__);
+        throw osrm::util::exception("Layer creation failed." + SOURCE_REF);
     }
     TIMER_STOP(SCC_RUN_SETUP);
     osrm::util::SimpleLogger().Write() << "shapefile setup took "
@@ -201,7 +202,7 @@ int main(int argc, char *argv[])
                     if (OGRERR_NONE != po_layer->CreateFeature(po_feature))
                     {
                         throw osrm::util::exception(
-                            "Failed to create feature in shapefile.", OSRM_SOURCE_FILE, __LINE__);
+                            "Failed to create feature in shapefile." + SOURCE_REF);
                     }
                     OGRFeature::DestroyFeature(po_feature);
                 }

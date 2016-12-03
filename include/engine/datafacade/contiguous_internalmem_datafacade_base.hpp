@@ -12,6 +12,8 @@
 #include "util/guidance/turn_lanes.hpp"
 
 #include "engine/geospatial_query.hpp"
+#include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/guidance/turn_bearing.hpp"
 #include "util/packed_vector.hpp"
 #include "util/range_table.hpp"
@@ -146,9 +148,7 @@ class ContiguousInternalMemoryDataFacadeBase : public BaseDataFacade
         {
             util::SimpleLogger().Write(logDEBUG) << "Leaf file name " << file_index_path.string();
             throw util::exception("Could not load " + file_index_path.string() +
-                                      "Is any data loaded into shared memory?",
-                                  OSRM_SOURCE_FILE,
-                                  __LINE__);
+                                  "Is any data loaded into shared memory?" + SOURCE_REF);
         }
 
         auto tree_ptr =

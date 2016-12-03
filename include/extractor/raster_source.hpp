@@ -67,15 +67,13 @@ class RasterGrid
         catch (std::exception const &ex)
         {
             throw util::exception("Failed to read from raster source " + filepath.string() + ": " +
-                                      ex.what(),
-                                  OSRM_SOURCE_FILE,
-                                  __LINE__);
+                                  ex.what() + SOURCE_REF);
         }
 
         if (!r || itr != end)
         {
-            throw util::exception(
-                "Failed to parse raster source: " + filepath.string(), OSRM_SOURCE_FILE, __LINE__);
+            throw util::exception("Failed to parse raster source: " + filepath.string() +
+                                  SOURCE_REF);
         }
     }
 

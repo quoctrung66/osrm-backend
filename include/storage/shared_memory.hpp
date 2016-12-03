@@ -2,6 +2,7 @@
 #define SHARED_MEMORY_HPP
 
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/simple_logger.hpp"
 
 #include <boost/filesystem.hpp>
@@ -242,7 +243,7 @@ makeSharedMemory(const IdentifierT &id, const uint64_t size = 0, bool read_write
         {
             if (0 == size)
             {
-                throw util::exception("lock file does not exist, exiting", OSRM_SOURCE_FILE, __LINE__);
+                throw util::exception("lock file does not exist, exiting" + SOURCE_REF);
             }
             else
             {
@@ -256,7 +257,7 @@ makeSharedMemory(const IdentifierT &id, const uint64_t size = 0, bool read_write
         util::SimpleLogger().Write(logERROR)
             << "Error while attempting to allocate shared memory: " << e.what() << ", code "
             << e.get_error_code();
-        throw util::exception(e.what(), OSRM_SOURCE_FILE, __LINE__);
+        throw util::exception(e.what() + SOURCE_REF);
     }
 }
 }

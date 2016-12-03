@@ -2,6 +2,7 @@
 #define OSRM_STORAGE_IO_HPP_
 
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/fingerprint.hpp"
 #include "util/simple_logger.hpp"
 
@@ -52,12 +53,12 @@ class FileReader
     {
         input_stream.open(filename_, std::ios::binary);
         if (!input_stream)
-            throw util::exception(
-                "Error opening " + filename + ": " + std::strerror(errno), OSRM_SOURCE_FILE, __LINE__);
+            throw util::exception("Error opening " + filename + ": " + std::strerror(errno) +
+                                  SOURCE_REF);
 
         if (flag == VerifyFingerprint && !ReadAndCheckFingerprint())
         {
-            throw util::exception("Fingerprint mismatch in " + filename, OSRM_SOURCE_FILE, __LINE__);
+            throw util::exception("Fingerprint mismatch in " + filename + SOURCE_REF);
         }
     }
 
@@ -78,12 +79,13 @@ class FileReader
         {
             if (result.eof())
             {
-                throw util::exception("Error reading from " + filename + ": Unexpected end of file",
-                                      OSRM_SOURCE_FILE,
-                                      __LINE__);
+                throw util::exception(
+                    std::string("Error reading from " + filename + ": Unexpected end of file") +
+                    SOURCE_REF);
             }
             throw util::exception(
-                "Error reading from " + filename + ": " + std::strerror(errno), OSRM_SOURCE_FILE, __LINE__);
+                std::string("Error reading from " + filename + ": " + std::strerror(errno)) +
+                SOURCE_REF);
         }
     }
 

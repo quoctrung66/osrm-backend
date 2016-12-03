@@ -14,6 +14,7 @@
 #include "engine/datafacade/datafacade_base.hpp"
 #include "util/coordinate.hpp"
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/fingerprint.hpp"
 #include "util/io.hpp"
 #include "util/packed_vector.hpp"
@@ -176,16 +177,12 @@ Storage::ReturnCode Storage::Run(int max_wait)
     if (SharedMemory::RegionExists(layout_region) && !SharedMemory::Remove(layout_region))
     {
         throw util::exception("Could not remove shared memory region " +
-                                  regionToString(layout_region),
-                              OSRM_SOURCE_FILE,
-                              __LINE__);
+                              regionToString(layout_region) + SOURCE_REF);
     }
     if (SharedMemory::RegionExists(data_region) && !SharedMemory::Remove(data_region))
     {
         throw util::exception("Could not remove shared memory region " +
-                                  regionToString(data_region),
-                              OSRM_SOURCE_FILE,
-                              __LINE__);
+                              regionToString(data_region) + SOURCE_REF);
     }
 
     // Allocate a memory layout in shared memory

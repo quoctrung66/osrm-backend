@@ -32,10 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <utility>
 
-#ifndef GLOBAL_EXCEPTION_HPP
-#include "util/source_macros.hpp"
-#endif
-
 namespace osrm
 {
 namespace util
@@ -44,15 +40,8 @@ namespace util
 class exception final : public std::exception
 {
   public:
-    explicit exception(const char *message_, const char *sourcefile, const int line)
-        : message(std::string(message_) + " (at " + std::string(sourcefile) + ":" +
-                  std::to_string(line) + ")")
-    {
-    }
-    explicit exception(const std::string &message_, const std::string &sourcefile, const int line)
-        : message(message_ + " (at " + sourcefile + ":" + std::to_string(line) + ")")
-    {
-    }
+    explicit exception(const char *message_) : message(message_) {}
+    explicit exception(const std::string &message_) : message(message_) {}
     const char *what() const noexcept override { return message.c_str(); }
 
   private:

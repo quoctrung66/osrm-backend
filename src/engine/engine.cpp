@@ -68,7 +68,9 @@ Engine::Engine(const EngineConfig &config)
         if (!DataWatchdog::TryConnect())
         {
             throw util::exception(
-                "No shared memory blocks found, have you forgotten to run osrm-datastore?", OSRM_SOURCE_FILE, __LINE__);
+                std::string(
+                    "No shared memory blocks found, have you forgotten to run osrm-datastore?") +
+                SOURCE_REF);
         }
 
         watchdog = std::make_unique<DataWatchdog>();
@@ -78,7 +80,7 @@ Engine::Engine(const EngineConfig &config)
     {
         if (!config.storage_config.IsValid())
         {
-            throw util::exception("Invalid file paths given!", OSRM_SOURCE_FILE, __LINE__);
+            throw util::exception("Invalid file paths given!" + SOURCE_REF);
         }
         immutable_data_facade =
             std::make_shared<datafacade::ProcessMemoryDataFacade>(config.storage_config);

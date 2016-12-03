@@ -1,4 +1,5 @@
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/simple_logger.hpp"
 #include "util/timing_util.hpp"
 
@@ -78,7 +79,8 @@ int main(int argc, char *argv[])
         // create file to test
         if (boost::filesystem::exists(test_path))
         {
-            throw osrm::util::exception("Data file already exists", OSRM_SOURCE_FILE, __LINE__);
+            throw osrm::util::exception("Data file already exists: " + test_path.string() +
+                                        SOURCE_REF);
         }
 
         int *random_array = new int[osrm::tools::NUMBER_OF_ELEMENTS];
@@ -97,14 +99,16 @@ int main(int argc, char *argv[])
             open(test_path.string().c_str(), O_CREAT | O_TRUNC | O_WRONLY | O_SYNC, S_IRWXU);
         if (-1 == file_desc)
         {
-            throw osrm::util::exception("Could not open random data file", OSRM_SOURCE_FILE, __LINE__);
+            throw osrm::util::exception("Could not open random data file" + test_path.string() +
+                                        SOURCE_REF);
         }
         TIMER_START(write_1gb);
         int ret =
             write(file_desc, random_array, osrm::tools::NUMBER_OF_ELEMENTS * sizeof(unsigned));
         if (0 > ret)
         {
-            throw osrm::util::exception("could not write random data file", OSRM_SOURCE_FILE, __LINE__);
+            throw osrm::util::exception("could not write random data file" + test_path.string() +
+                                        SOURCE_REF);
         }
         TIMER_STOP(write_1gb);
         close(file_desc);
@@ -124,7 +128,7 @@ int main(int argc, char *argv[])
         // Run Non-Cached I/O benchmarks
         if (!boost::filesystem::exists(test_path))
         {
-            throw osrm::util::exception("data file does not exist", OSRM_SOURCE_FILE, __LINE__);
+            throw osrm::util::exception("data file does not exist" + SOURCE_REF);
         }
 
         // volatiles do not get optimized
@@ -208,13 +212,13 @@ int main(int argc, char *argv[])
             {
                 osrm::util::SimpleLogger().Write(logWARNING) << "offset: " << current_offset;
                 osrm::util::SimpleLogger().Write(logWARNING) << "seek error " << strerror(errno);
-                throw osrm::util::exception("seek error", OSRM_SOURCE_FILE, __LINE__);
+                throw osrm::util::exception("seek error" + SOURCE_REF);
             }
             if (-1 == ret2)
             {
                 osrm::util::SimpleLogger().Write(logWARNING) << "offset: " << current_offset;
                 osrm::util::SimpleLogger().Write(logWARNING) << "read error " << strerror(errno);
-                throw osrm::util::exception("read error", OSRM_SOURCE_FILE, __LINE__);
+                throw osrm::util::exception("read error" + SOURCE_REF);
             }
             timing_results_raw_random.push_back(TIMER_SEC(random_access));
         }
@@ -268,13 +272,13 @@ int main(int argc, char *argv[])
             {
                 osrm::util::SimpleLogger().Write(logWARNING) << "offset: " << current_offset;
                 osrm::util::SimpleLogger().Write(logWARNING) << "seek error " << strerror(errno);
-                throw osrm::util::exception("seek error", OSRM_SOURCE_FILE, __LINE__);
+                throw osrm::util::exception("seek error" + SOURCE_REF);
             }
             if (-1 == ret2)
             {
                 osrm::util::SimpleLogger().Write(logWARNING) << "offset: " << current_offset;
                 osrm::util::SimpleLogger().Write(logWARNING) << "read error " << strerror(errno);
-                throw osrm::util::exception("read error", OSRM_SOURCE_FILE, __LINE__);
+                throw osrm::util::exception("read error" + SOURCE_REF);
             }
             timing_results_raw_seq.push_back(TIMER_SEC(read_every_100));
         }

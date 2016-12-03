@@ -5,6 +5,7 @@
 #include "util/range_table.hpp"
 
 #include "util/exception.hpp"
+#include "util/exception_utils.hpp"
 #include "util/fingerprint.hpp"
 #include "util/io.hpp"
 #include "util/simple_logger.hpp"
@@ -21,6 +22,7 @@
 #include <chrono>
 #include <limits>
 #include <mutex>
+#include <sstream>
 
 namespace
 {
@@ -273,9 +275,8 @@ void ExtractionContainers::PrepareNodes()
     if (internal_id > std::numeric_limits<NodeID>::max())
     {
         throw util::exception("There are too many nodes remaining after filtering, OSRM only "
-                              "supports 2^32 unique nodes",
-                              OSRM_SOURCE_FILE,
-                              __LINE__);
+                              "supports 2^32 unique nodes, but there were " +
+                              std::to_string(internal_id) + SOURCE_REF);
     }
     max_internal_node_id = boost::numeric_cast<NodeID>(internal_id);
     TIMER_STOP(id_map);
@@ -402,7 +403,8 @@ void ExtractionContainers::PrepareEdges(ScriptingEnvironment &scripting_environm
         scripting_environment.ProcessSegment(
             edge_iterator->source_coordinate, *node_iterator, distance, edge_iterator->weight_data);
 
-        const double weight = [distance](const InternalExtractorEdge::WeightData &data) {
+        const double weight = [distance, edge_iterator, node_iterator](
+            const InternalExtractorEdge::WeightData &data) {
             switch (data.type)
             {
             case InternalExtractorEdge::WeightType::EDGE_DURATION:
@@ -413,7 +415,11 @@ void ExtractionContainers::PrepareEdges(ScriptingEnvironment &scripting_environm
                 return (distance * 10.) / (data.speed / 3.6);
                 break;
             case InternalExtractorEdge::WeightType::INVALID:
-                util::exception("invalid weight type", OSRM_SOURCE_FILE, __LINE__);
+                std::stringstream coordstring;
+                coordstring << edge_iterator->source_coordinate << " to " << node_iterator->lon
+                            << "," << node_iterator->lat;
+                util::exception("Encountered invalid weight at segment " + coordstring.str() +
+                                SOURCE_REF);
             }
             return -1.0;
         }(edge_iterator->weight_data);
@@ -580,8 +586,7 @@ void ExtractionContainers::WriteEdges(std::ofstream &file_out_stream) const
 
     if (used_edges_counter > std::numeric_limits<unsigned>::max())
     {
-        throw util::exception(
-            "There are too many edges, OSRM only supports 2^32", OSRM_SOURCE_FILE, __LINE__);
+        throw util::exception("There are too many edges, OSRM only supports 2^32" + SOURCE_REF);
     }
     TIMER_STOP(write_edges);
     std::cout << "ok, after " << TIMER_SEC(write_edges) << "s" << std::endl;
